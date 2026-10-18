@@ -68,14 +68,16 @@ export const WORLD: NodeSpec = {
   size: [1800, 1000],
   title: 'ABHISHEK',
   sub: 'Security engineering · systems · offensive tooling',
-  // The surface reads as one route in two parallel rows: who and I-III along
-  // the top, left to right; IV-VI and reach along the bottom, right to left.
-  // Scrolling travels it in that order (see the rail in main.ts).
+  // The surface reads as one route in a loose ring round the name, clockwise
+  // from who on the left, through I-VI, to reach at the lower left. The ring
+  // is deliberately uneven, but every marker keeps clear of the title block
+  // (roughly x ±520, y ±235 here). Scrolling travels it in that order (see the
+  // rail in main.ts).
   children: [
     {
       id: 'neopass',
       kind: 'project',
-      at: [-200, -330],
+      at: [-330, -370],
       size: [1120, 640],
       portal: 'I · NEOPASS',
       index: '01',
@@ -167,7 +169,7 @@ export const WORLD: NodeSpec = {
     {
       id: 'owlsec',
       kind: 'project',
-      at: [200, -330],
+      at: [130, -405],
       size: [1120, 640],
       portal: 'II · OWL-SEC',
       index: '02',
@@ -237,7 +239,7 @@ export const WORLD: NodeSpec = {
     {
       id: 'gitrixhunt',
       kind: 'project',
-      at: [600, -330],
+      at: [620, -350],
       size: [1120, 640],
       portal: 'III · GITRIXHUNT',
       index: '03',
@@ -306,7 +308,7 @@ export const WORLD: NodeSpec = {
     {
       id: 'skillwallet',
       kind: 'project',
-      at: [600, 330],
+      at: [690, 40],
       size: [1120, 640],
       portal: 'IV · SKILLWALLET',
       index: '04',
@@ -344,7 +346,7 @@ export const WORLD: NodeSpec = {
     {
       id: 'voidctf',
       kind: 'project',
-      at: [200, 330],
+      at: [400, 360],
       size: [1120, 640],
       portal: 'V · VOIDCTF',
       index: '05',
@@ -382,7 +384,7 @@ export const WORLD: NodeSpec = {
     {
       id: 'denox',
       kind: 'project',
-      at: [-200, 330],
+      at: [-120, 400],
       size: [1120, 640],
       portal: 'VI · DE-NOX',
       index: '06',
@@ -420,7 +422,7 @@ export const WORLD: NodeSpec = {
     {
       id: 'about',
       kind: 'about',
-      at: [-600, -330],
+      at: [-640, -170],
       size: [1160, 760],
       portal: 'WHO',
       title: 'Abhishek',
@@ -437,23 +439,17 @@ export const WORLD: NodeSpec = {
         ],
       ],
       facts: [
-        { k: 'Based', v: 'Draft · city' },
-        { k: 'Focus', v: 'Offensive security, systems' },
-        { k: 'Now', v: 'Draft · what you are doing this month' },
-        { k: 'Reading', v: 'Draft · one honest answer' },
-      ],
-      links: [
-        { label: 'GitHub', value: 'draft/handle', href: '#' },
-        { label: 'LinkedIn', value: 'draft', href: '#' },
-        { label: 'Mail', value: 'voidsociety@kiet.edu', href: 'mailto:voidsociety@kiet.edu' },
-        { label: 'PGP', value: 'draft fingerprint', href: '#' },
+        { k: 'Based', v: 'Somewhere in the cloud' },
+        { k: 'Focus', v: 'Cloud-native backend, chaos engineering' },
+        { k: 'Now', v: 'Making a centralized dependency manager for distributed systems' },
+        { k: 'Reading', v: 'The Art of Being Alone' },
       ],
     },
 
     {
       id: 'contact',
       kind: 'contact',
-      at: [-600, 330],
+      at: [-560, 300],
       size: [1040, 560],
       portal: 'REACH',
       title: 'Open channels',

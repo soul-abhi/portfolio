@@ -257,6 +257,22 @@
   padding-top: 0.9cqw;
   border-top: 1px solid var(--hair);
 }
+/* The WHO facts are sentences, not readings: label above, value below and
+   free to wrap, so a long answer stays inside the column. */
+.about .spec > div {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4cqw;
+}
+.about .spec > div::after {
+  content: none;
+}
+.about .spec dd {
+  flex: initial;
+  order: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
 
 .chips {
   list-style: none;
