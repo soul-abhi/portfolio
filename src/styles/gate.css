@@ -1,0 +1,154 @@
+/*
+ * The gate. Two halves of one night (drawn by night.ts), meeting down the
+ * middle; the figure and the light sit above them, and a sheet of black lifts
+ * off the top at the start. The base #intro rules in intro.css still apply.
+ */
+.gate__half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  will-change: transform;
+  background: #020308;
+}
+/* Widths and positions are set in whole cells by gate.ts. */
+.gate__half canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#intro .gate__scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+}
+
+/* The light is smooth, never pixelated; this out-specifies intro.css. */
+#intro .gate__fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: auto;
+  pointer-events: none;
+}
+
+.gate__night {
+  position: absolute;
+  inset: 0;
+  background: #050505;
+  pointer-events: none;
+}
+
+/* As the halves part, light spills from their inner edges over the world. */
+.gate.is-open .gate__half--l {
+  box-shadow:
+    inset -2px 0 0 rgba(255, 236, 200, 0.85),
+    8px 0 36px rgba(255, 210, 160, 0.45);
+}
+.gate.is-open .gate__half--r {
+  box-shadow:
+    inset 2px 0 0 rgba(255, 236, 200, 0.85),
+    -8px 0 36px rgba(255, 210, 160, 0.45);
+}
+
+#intro.gate {
+  cursor: default;
+}
+
+/* --- the question ---------------------------------------------------------
+   The cloud is pixel art on the intro's grid; the words and the field are
+   real DOM laid over it. --q is the grid's cell size in px. */
+.ask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.ask[hidden] {
+  display: none;
+}
+#intro .ask__cloud {
+  position: absolute;
+}
+.ask__body {
+  position: absolute;
+  width: max-content;
+  margin: 0;
+  pointer-events: auto;
+  font-family: 'Silkscreen', var(--mono), monospace;
+  font-size: 16px;
+  line-height: 1.3;
+  color: #0d1424;
+  opacity: 0;
+  transform: translateY(var(--q));
+  /* Stepped, like everything else drawn on the grid. */
+  transition:
+    opacity 0.18s steps(3),
+    transform 0.18s steps(3);
+}
+.ask.is-small .ask__body {
+  font-size: 12px;
+}
+.ask.is-open .ask__body {
+  opacity: 1;
+  transform: none;
+}
+.ask__q {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 calc(var(--q) * 3);
+}
+.ask__q span {
+  white-space: nowrap;
+}
+.ask__l1 {
+  color: #7a1020;
+}
+.ask__field {
+  display: block;
+}
+.ask__input {
+  display: block;
+  width: 15ch;
+  padding: 2px 0;
+  font: inherit;
+  color: #0d1424;
+  background: transparent;
+  border: 0;
+  border-bottom: var(--q) solid #0a0f1c;
+  border-radius: 0;
+  outline: none;
+  caret-color: #c8102e;
+}
+.ask__input:focus-visible {
+  border-bottom-color: #c8102e;
+}
+.ask__hint {
+  margin: calc(var(--q) * 2) 0 0;
+  font-size: 0.7em;
+  color: #4a5a72;
+  animation: ask-blink 1.1s steps(1) infinite;
+}
+@keyframes ask-blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+.ask.is-greeting .ask__field,
+.ask.is-greeting .ask__hint {
+  display: none;
+}
+.ask.is-greeting .ask__q {
+  margin: 0;
+}
+.ask__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

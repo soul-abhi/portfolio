@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Abhishek — one surface</title>
+    <meta
+      name="description"
+      content="A portfolio with no pages. One infinite plane where zoom level is information depth: six systems, each descending from name to case file to mechanism to source."
+    />
+    <meta name="theme-color" content="#080808" />
+
+    <!-- Inline so the ground is black on the very first paint, before the
+         stylesheet resolves. A dark site has no excuse for a white flash. -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #080808;
+      }
+    </style>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Abhishek — one surface" />
+    <meta
+      property="og:description"
+      content="No pages. One infinite plane where zoom level is information depth."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Silkscreen&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- The display face is self-hosted, so preload it rather than waiting for
+         the stylesheet to be parsed before the browser finds it. -->
+    <link rel="preload" href="/fonts/CandyInc.woff" as="font" type="font/woff" crossorigin />
+  </head>
+  <body>
+    <canvas id="field" aria-hidden="true"></canvas>
+    <canvas id="horizon" aria-hidden="true"></canvas>
+
+    <div id="stage">
+      <div id="world"></div>
+    </div>
+
+    <div id="hud"></div>
+
+    <noscript>
+      <div class="noscript">
+        <h1>Abhishek</h1>
+        <p>
+          This site is a single zoomable surface and needs JavaScript to exist. The short version:
+          security engineering, systems, offensive tooling. Reach me at
+          <a href="mailto:voidsociety@kiet.edu">voidsociety@kiet.edu</a>.
+        </p>
+      </div>
+    </noscript>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "zoom-portfolio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "art:samurai": "node tools/samurai/build.ts",
+    "art:wanderer": "${ASEPRITE:-aseprite} -b --script-param input=art/wanderer.aseprite --script-param sheet=src/intro/wanderer.png --script-param data=src/intro/wanderer.json --script tools/wanderer/animate.lua",
+    "art:night": "${ASEPRITE:-aseprite} -b --script-param output=art/night.aseprite --script-param png=src/intro/night.png --script-param data=src/intro/night.json --script tools/night/paint.lua"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  }
+}

@@ -1,0 +1,1166 @@
+/* ===========================================================================
+   STRATUM 0 - the surface
+   =========================================================================== */
+
+.root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4cqw;
+  text-align: center;
+}
+
+.root__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1.1cqw;
+  font-size: 1.05cqw;
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  color: #fff;
+}
+.root__eyebrow .dot {
+  width: 0.26cqw;
+  height: 0.26cqw;
+  border-radius: 50%;
+  background: var(--red-dim);
+}
+
+.root__title {
+  position: relative;
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 16.5cqw;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+/* The fire on the dot of the i. Sized in the title's own pixels, so it is
+   welded to the glyph at every zoom level. */
+.title-flame {
+  position: absolute;
+  pointer-events: none;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.root__rule {
+  width: 26cqw;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red-dim) 20%, var(--red-dim) 80%, transparent);
+  position: relative;
+}
+.root__rule i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.5cqw;
+  height: 0.5cqw;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--red);
+}
+
+.root__sub {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 2.5cqw;
+  color: #fff;
+}
+
+.root__hint {
+  margin: 1.2cqw 0 0;
+  font-size: 0.95cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* ===========================================================================
+   SHARED PLATE
+   =========================================================================== */
+
+.plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 4.6cqw 5cqw;
+  background:
+    linear-gradient(180deg, rgba(20, 20, 20, 0.94), rgba(9, 9, 9, 0.96));
+  border: 1px solid var(--hair);
+  box-shadow: 0 2cqw 6cqw rgba(0, 0, 0, 0.5);
+}
+
+/* Corner ticks. The cheapest possible signal that something was drafted
+   rather than dropped into a template. */
+.tick {
+  position: absolute;
+  width: 1.5cqw;
+  height: 1.5cqw;
+  border-color: var(--red-dim);
+  border-style: solid;
+  border-width: 0;
+}
+.tick--tl {
+  top: -1px;
+  left: -1px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.tick--tr {
+  top: -1px;
+  right: -1px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+.tick--bl {
+  bottom: -1px;
+  left: -1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+.tick--br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+.plate__head {
+  display: flex;
+  align-items: center;
+  gap: 1.6cqw;
+  font-size: 1.1cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+.plate__head .idx {
+  font-family: var(--serif);
+  font-size: 3.4cqw;
+  letter-spacing: 0;
+  color: var(--red);
+  line-height: 1;
+}
+.plate__kind {
+  padding-bottom: 0.1cqw;
+  border-bottom: 1px solid var(--hair);
+}
+.plate__head .stamp {
+  margin-left: auto;
+  padding: 0.5cqw 1.1cqw;
+  border: 1px solid var(--red-dim);
+  color: var(--red-soft);
+  font-size: 0.98cqw;
+  transform: rotate(-2.4deg);
+}
+.plate__head .stamp--ghost {
+  border-color: var(--hair);
+  color: var(--paper-faint);
+  transform: none;
+}
+
+.plate__title {
+  margin: 2.6cqw 0 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 12.2cqw;
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+.plate__title--sm {
+  font-size: 7.2cqw;
+  margin-top: 1.8cqw;
+}
+
+.plate__sub {
+  margin: 1cqw 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 3cqw;
+  line-height: 1.2;
+  color: var(--paper-dim);
+}
+
+.hr {
+  height: 1px;
+  margin: 2.6cqw 0;
+  background: linear-gradient(90deg, var(--red-dim), var(--hair) 40%, transparent);
+}
+
+.plate__body {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 4cqw;
+  align-items: start;
+}
+
+/* Title at the top, detail pinned to the bottom. The gap between them is the
+   composition, not dead space. */
+.plate--project .hr {
+  margin-top: auto;
+}
+
+.lede {
+  margin: 0;
+  font-weight: 300;
+  font-size: 1.7cqw;
+  line-height: 1.8;
+  color: var(--paper-dim);
+}
+
+.plate__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+}
+
+.spec {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9cqw;
+}
+.spec > div {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8cqw;
+}
+.spec dt {
+  flex: none;
+  font-size: 0.95cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+.spec > div::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--paper-ghost) 0 1px, transparent 1px 4px);
+}
+.spec dd {
+  flex: none;
+  margin: 0;
+  order: 3;
+  font-size: 1.25cqw;
+  color: var(--paper);
+}
+.spec--stack > div {
+  padding-top: 0.9cqw;
+  border-top: 1px solid var(--hair);
+}
+
+.chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6cqw;
+}
+.chips li {
+  padding: 0.45cqw 0.9cqw;
+  border: 1px solid var(--hair);
+  font-size: 0.95cqw;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+}
+
+/* ===========================================================================
+   STRATUM 2 - case file
+   =========================================================================== */
+
+.study {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.5fr 0.78fr;
+  gap: 4cqw;
+  margin-top: 3cqw;
+  min-height: 0;
+}
+.study__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2.6cqw;
+}
+.sec h3 {
+  margin: 0 0 0.8cqw;
+  display: flex;
+  align-items: baseline;
+  gap: 1cqw;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 3.9cqw;
+  line-height: 1.05;
+}
+.sec__n {
+  font-family: var(--mono);
+  font-size: 0.95cqw;
+  letter-spacing: var(--track);
+  color: var(--red-soft);
+}
+.sec p {
+  margin: 0;
+  padding-left: 2.9cqw;
+  font-weight: 300;
+  font-size: 1.42cqw;
+  line-height: 1.85;
+  color: var(--paper-dim);
+}
+
+.study__side h4 {
+  margin: 0 0 1.4cqw;
+  font-size: 0.95cqw;
+  font-weight: 400;
+  letter-spacing: var(--track-wide);
+  color: var(--red-soft);
+}
+
+/* ===========================================================================
+   STRATUM 3 - mechanism
+   =========================================================================== */
+
+.flow {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  margin-top: 3.4cqw;
+  border-top: 1px solid var(--red-dim);
+}
+.stage {
+  position: relative;
+  padding: 2.2cqw 1.6cqw 0 0;
+}
+.stage + .stage {
+  padding-left: 1.6cqw;
+  border-left: 1px solid var(--hair);
+}
+/* The notch on the rail above each stage reads as a measured interval. */
+.stage::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 0.5cqw;
+  height: 0.5cqw;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--red);
+}
+.stage + .stage::before {
+  left: 0;
+}
+.stage__n {
+  display: block;
+  font-size: 0.9cqw;
+  letter-spacing: var(--track);
+  color: var(--red-mute);
+}
+.stage__label {
+  display: block;
+  margin: 0.7cqw 0 1cqw;
+  font-size: 1.7cqw;
+  letter-spacing: 0.16em;
+  color: var(--paper);
+}
+.stage__detail {
+  margin: 0;
+  font-weight: 300;
+  font-size: 1.25cqw;
+  line-height: 1.75;
+  color: var(--paper-dim);
+}
+
+.notes {
+  margin-top: auto;
+  padding-top: 2.4cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7cqw;
+}
+.notes p {
+  margin: 0;
+  font-size: 1.15cqw;
+  font-style: italic;
+  color: var(--paper-faint);
+}
+.notes sup {
+  margin-right: 0.7cqw;
+  font-style: normal;
+  color: var(--red-soft);
+}
+
+/* ===========================================================================
+   STRATUM 4 - source
+   =========================================================================== */
+
+.plate--source {
+  padding: 0;
+  overflow: hidden;
+}
+.src__head {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+  padding: 2cqw 3cqw;
+  border-bottom: 1px solid var(--hair);
+  font-size: 1.1cqw;
+  letter-spacing: 0.1em;
+  color: var(--paper-dim);
+}
+.src__dot {
+  width: 0.7cqw;
+  height: 0.7cqw;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 1.4cqw var(--red-dim);
+}
+.src__lang {
+  margin-left: auto;
+  letter-spacing: var(--track);
+  color: var(--red-soft);
+}
+.src__body {
+  flex: 1;
+  min-height: 0;
+  padding: 2.4cqw 3cqw;
+  overflow: hidden;
+}
+.src__code {
+  margin: 0;
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: 1.42cqw;
+  line-height: 1.72;
+  white-space: pre;
+  color: var(--paper-dim);
+}
+.src__code .ln {
+  display: block;
+  position: relative;
+  padding-left: 4.4cqw;
+}
+.src__code .ln::before {
+  content: attr(data-n);
+  position: absolute;
+  left: 0;
+  width: 3cqw;
+  text-align: right;
+  color: var(--paper-ghost);
+}
+.t-c {
+  color: var(--paper-faint);
+  font-style: italic;
+}
+.t-s {
+  color: var(--paper);
+}
+.t-k {
+  color: var(--red-soft);
+}
+.t-n {
+  color: var(--paper-dim);
+}
+.t-f {
+  color: var(--paper);
+  font-weight: 500;
+}
+
+/* ===========================================================================
+   SUBJECT / CHANNELS
+   =========================================================================== */
+
+.about {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 4cqw;
+  align-content: start;
+}
+/* The prose turns in place: every page shares one grid cell, so the column
+   holds the height of the tallest and nothing below it moves on a turn. */
+.about__prose {
+  display: grid;
+}
+.about__page {
+  grid-area: 1 / 1;
+  transition:
+    opacity 420ms var(--ease-out),
+    transform 560ms var(--ease-out),
+    filter 420ms var(--ease-out);
+}
+.about__page:not(.is-current) {
+  opacity: 0;
+  transform: translateY(1.4cqw);
+  filter: blur(0.2cqw);
+  pointer-events: none;
+}
+.about__page.is-past {
+  transform: translateY(-1.4cqw);
+}
+.about__pager {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper-ghost);
+}
+.about__pager-n {
+  color: var(--red-soft);
+}
+@media (prefers-reduced-motion: reduce) {
+  .about__page {
+    transition: opacity 200ms ease;
+  }
+  .about__page:not(.is-current),
+  .about__page.is-past {
+    transform: none;
+    filter: none;
+  }
+}
+.about__prose p {
+  margin: 0 0 1.6cqw;
+  font-weight: 300;
+  font-size: 1.6cqw;
+  line-height: 1.85;
+  color: #fff;
+}
+
+/* The way out of the panel, along the bottom edge. */
+.about__links {
+  list-style: none;
+  margin: 2.4cqw 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  border-top: 1px solid var(--hair);
+}
+.about__links li + li {
+  border-left: 1px solid var(--hair);
+}
+.about__links a {
+  display: flex;
+  align-items: baseline;
+  gap: 1cqw;
+  padding: 1.6cqw 1.4cqw 0.4cqw;
+  transition: background 0.2s ease;
+}
+.about__links a:hover {
+  background: var(--red-ghost);
+}
+.about__link-k {
+  font-size: 0.95cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--red-soft);
+}
+.about__link-v {
+  font-size: 1.25cqw;
+  color: var(--paper);
+}
+.about__link-arrow {
+  margin-left: auto;
+  font-size: 1.1cqw;
+  color: var(--paper-ghost);
+}
+.about__links a:hover .about__link-arrow {
+  color: var(--red-soft);
+}
+
+.chan {
+  list-style: none;
+  margin: 3cqw 0 0;
+  padding: 0;
+}
+.chan li {
+  border-top: 1px solid var(--hair);
+}
+.chan li:last-child {
+  border-bottom: 1px solid var(--hair);
+}
+.chan a {
+  display: grid;
+  grid-template-columns: 9cqw 1fr auto;
+  align-items: center;
+  gap: 1.4cqw;
+  padding: 1.6cqw 0.4cqw;
+  transition: background 0.2s ease, padding 0.25s ease;
+}
+.chan a:hover {
+  background: var(--red-ghost);
+  padding-left: 1.4cqw;
+}
+.chan__k {
+  font-size: 0.95cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+.chan__v {
+  font-family: var(--serif);
+  font-size: 3cqw;
+  color: var(--paper);
+}
+.chan__arrow {
+  font-size: 1.8cqw;
+  color: var(--red);
+  opacity: 0;
+  transform: translateX(-0.8cqw);
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+.chan a:hover .chan__arrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===========================================================================
+   MARGINALIA - a hand in the margin, no box around it
+   =========================================================================== */
+
+.margin-note {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-family: var(--display);
+  font-style: normal;
+  font-size: 7cqw;
+  line-height: 1.25;
+  color: var(--red);
+  transform: rotate(-2.2deg);
+  text-shadow: 0 0 6cqw rgba(215, 25, 53, 0.3);
+}
+
+/* ===========================================================================
+   PORTALS - the only navigation on the surface
+   =========================================================================== */
+
+.portal {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1cqw;
+  padding: 0;
+  background: none;
+  border: 0;
+  font-family: var(--mono);
+  color: var(--paper-dim);
+  cursor: pointer;
+}
+.portal__mark {
+  width: 2.6cqw;
+  height: 2.6cqw;
+  border: 1px solid var(--red-dim);
+  transform: rotate(45deg);
+  position: relative;
+  animation: breathe 3.6s ease-in-out infinite;
+}
+.portal__mark::after {
+  content: '';
+  position: absolute;
+  inset: 32%;
+  background: var(--red-soft);
+}
+.portal__cap {
+  font-size: 1.05cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.portal:hover {
+  color: var(--red-soft);
+}
+.portal:hover .portal__mark {
+  border-color: var(--red);
+  animation: none;
+  transform: rotate(45deg) scale(1.22);
+}
+.portal:focus-visible {
+  outline: 1px solid var(--red);
+  outline-offset: 1cqw;
+}
+.portal__mark,
+.portal {
+  transition: color 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+}
+
+/* Project markers on the surface carry more weight - at stratum 0 they ARE
+   the content, so they get the roman numeral treatment. */
+.portal--project .portal__mark {
+  width: 3.4cqw;
+  height: 3.4cqw;
+}
+.portal--project .portal__cap {
+  font-size: 1.25cqw;
+  color: var(--paper);
+}
+
+/* Below the surface the marker becomes a survey frame around the footprint the
+   child plate will grow into, with its caption parked outside that rectangle
+   so the two never overlap during the crossfade. */
+.node:not(.node--root) .portal {
+  display: block;
+  width: var(--pw);
+  height: var(--ph);
+}
+.node:not(.node--root) .portal__mark {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  transform: none;
+  border: 1px solid var(--red-ghost);
+  animation: none;
+}
+.node:not(.node--root) .portal__mark::after {
+  content: '';
+  position: absolute;
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  width: 0.5cqw;
+  height: 0.5cqw;
+  background: var(--red-soft);
+  transform: translate(-50%, -50%) rotate(45deg);
+  animation: breathe-dot 3.6s ease-in-out infinite;
+}
+.node:not(.node--root) .portal__cap {
+  position: absolute;
+  top: calc(100% + 0.9cqw);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9cqw;
+}
+.node:not(.node--root) .portal:hover .portal__mark {
+  border-color: var(--red-dim);
+  transform: none;
+}
+
+/* A sub-panel has to read as a door, not as a thumbnail. The frame gets a lit
+   outline, pixel corner brackets, and a slow ring that leaves it outward - the
+   only moving thing on a settled plate, so the eye finds it. The badge says
+   what to do. Only opacity and transform animate. */
+.node:not(.node--root) .portal__mark {
+  --bk: 0.9cqw;
+  --bw: 0.22cqw;
+  border-color: var(--red-dim);
+  background:
+    linear-gradient(var(--red), var(--red)) top left / var(--bk) var(--bw),
+    linear-gradient(var(--red), var(--red)) top left / var(--bw) var(--bk),
+    linear-gradient(var(--red), var(--red)) top right / var(--bk) var(--bw),
+    linear-gradient(var(--red), var(--red)) top right / var(--bw) var(--bk),
+    linear-gradient(var(--red), var(--red)) bottom left / var(--bk) var(--bw),
+    linear-gradient(var(--red), var(--red)) bottom left / var(--bw) var(--bk),
+    linear-gradient(var(--red), var(--red)) bottom right / var(--bk) var(--bw),
+    linear-gradient(var(--red), var(--red)) bottom right / var(--bw) var(--bk),
+    rgba(215, 25, 53, 0.04);
+  background-repeat: no-repeat;
+  box-shadow: 0 0 1.4cqw rgba(215, 25, 53, 0.16);
+  transition: border-color 200ms var(--ease-out), background-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+.node:not(.node--root) .portal__mark::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--red-soft);
+  opacity: 0;
+  animation: portal-ring 2.8s var(--ease-out) infinite;
+  pointer-events: none;
+}
+/* The centre dot made way for the badge. */
+.node:not(.node--root) .portal__mark::after {
+  display: none;
+}
+/* Name above the frame, badge below it, so the two never compete for one
+   line however narrow the frame is. */
+.node:not(.node--root) .portal__cap {
+  top: auto;
+  bottom: calc(100% + 0.6cqw);
+  left: 0;
+  transform: none;
+  color: var(--paper);
+}
+
+.portal__go {
+  display: none;
+}
+/* The badge hangs under the frame's right edge: inside it, the half-drawn
+   child plate would sit on top of it. */
+.node:not(.node--root) .portal__go {
+  position: absolute;
+  top: calc(100% + 0.5cqw);
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.55cqw;
+  padding: 0.4cqw 0.65cqw;
+  background: rgba(8, 8, 8, 0.82);
+  border: 1px solid var(--red-dim);
+  color: var(--red-soft);
+  font-family: 'Silkscreen', var(--mono);
+  font-size: 0.78cqw;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), border-color 200ms var(--ease-out);
+}
+/* A pixel arrow pointing in: a 3x5 chevron drawn from box-shadow cells. */
+.portal__go-a {
+  --c: 0.16cqw;
+  position: relative;
+  width: calc(var(--c) * 3);
+  height: calc(var(--c) * 5);
+  animation: portal-nudge 1.4s var(--ease-in-out) infinite;
+}
+.portal__go-a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--c);
+  height: var(--c);
+  background: currentColor;
+  box-shadow:
+    var(--c) var(--c) currentColor,
+    calc(var(--c) * 2) calc(var(--c) * 2) currentColor,
+    var(--c) calc(var(--c) * 3) currentColor,
+    0 calc(var(--c) * 4) currentColor;
+}
+
+.node:not(.node--root) .portal:hover .portal__mark,
+.node:not(.node--root) .portal:focus-visible .portal__mark {
+  border-color: var(--red);
+  background-color: rgba(215, 25, 53, 0.1);
+  box-shadow: 0 0 2.2cqw rgba(215, 25, 53, 0.32);
+}
+.node:not(.node--root) .portal:hover .portal__go,
+.node:not(.node--root) .portal:focus-visible .portal__go {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--paper);
+}
+.node:not(.node--root) .portal:active .portal__mark {
+  transform: scale(0.98);
+  transition-duration: 100ms;
+}
+
+@keyframes portal-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.08, 1.14);
+  }
+}
+@keyframes portal-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(0.22cqw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .node:not(.node--root) .portal__mark::before,
+  .portal__go-a {
+    animation: none;
+  }
+}
+
+@keyframes breathe-dot {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.5);
+  }
+}
+
+/* On the surface the markers carry the whole constellation, so they are sized
+   as content rather than as affordances. */
+.node--root .portal {
+  gap: 1.5cqw;
+}
+.node--root .portal__cap {
+  font-size: 1.5cqw;
+  color: var(--paper);
+}
+.node--root .portal--about .portal__cap,
+.node--root .portal--contact .portal__cap {
+  font-size: 1.15cqw;
+  color: var(--paper-dim);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: rotate(45deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.12);
+  }
+}
+
+/* ===========================================================================
+   THE DESCENT - portrait plates for touch. Because every measurement above is
+   in cqw, the layout only needs its columns collapsed, not re-sized.
+   =========================================================================== */
+
+/*
+ * A portrait plate renders about a third as wide as its desktop counterpart,
+ * and cqw is a share of that width - so every size below is re-tuned, not
+ * merely reflowed. Display type shrinks in absolute terms, body type grows.
+ */
+body.is-dive .root {
+  justify-content: flex-start;
+  padding-top: 7cqw;
+  gap: 2.4cqw;
+}
+body.is-dive .root__eyebrow {
+  font-size: 2.4cqw;
+  gap: 1.8cqw;
+}
+body.is-dive .root__eyebrow .dot {
+  width: 0.6cqw;
+  height: 0.6cqw;
+}
+body.is-dive .root__title {
+  font-size: 24cqw;
+}
+body.is-dive .root__rule {
+  width: 46cqw;
+}
+body.is-dive .root__rule i {
+  width: 1.2cqw;
+  height: 1.2cqw;
+}
+body.is-dive .root__sub {
+  font-size: 4.4cqw;
+}
+body.is-dive .root__hint {
+  font-size: 2.2cqw;
+}
+
+/* The surface index: marker and name on one line, the way a contents page
+   would set it. */
+body.is-dive .node--root .portal {
+  flex-direction: row;
+  gap: 2.6cqw;
+}
+body.is-dive .node--root .portal__mark {
+  width: 3.2cqw;
+  height: 3.2cqw;
+}
+body.is-dive .node--root .portal__cap {
+  font-size: 3.6cqw;
+}
+body.is-dive .node--root .portal--about .portal__cap,
+body.is-dive .node--root .portal--contact .portal__cap {
+  font-size: 3cqw;
+}
+body.is-dive .node:not(.node--root) .portal__cap {
+  top: calc(100% + 7cqw);
+  bottom: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.2cqw;
+}
+body.is-dive .node:not(.node--root) .portal__mark {
+  --bk: 2.2cqw;
+  --bw: 0.5cqw;
+}
+/* The phone frame is too narrow to share a line: badge first, name under it. */
+body.is-dive .node:not(.node--root) .portal__go {
+  top: calc(100% + 1.2cqw);
+  right: 50%;
+  translate: 50% 0;
+  gap: 1.2cqw;
+  padding: 1cqw 1.6cqw;
+  font-size: 2cqw;
+}
+body.is-dive .portal__go-a {
+  --c: 0.4cqw;
+}
+
+body.is-dive .plate {
+  padding: 6cqw 6.5cqw;
+}
+/* On desktop the detail is pinned to the bottom of the plate; on a phone the
+   bottom band is where the next stratum waits, so the detail stacks from the
+   top instead and the two never overlap. */
+body.is-dive .plate--project .hr {
+  margin-top: 2.6cqw;
+}
+body.is-dive .plate__head {
+  font-size: 2.4cqw;
+  gap: 2.6cqw;
+}
+body.is-dive .plate__head .idx {
+  font-size: 7cqw;
+}
+body.is-dive .plate__head .stamp {
+  font-size: 2.1cqw;
+  padding: 1cqw 2cqw;
+}
+body.is-dive .plate__title {
+  font-size: 18cqw;
+}
+body.is-dive .plate__title--sm {
+  font-size: 12.5cqw;
+}
+body.is-dive .plate__sub {
+  font-size: 4.6cqw;
+}
+body.is-dive .lede,
+body.is-dive .about__prose p {
+  font-size: 3.2cqw;
+}
+body.is-dive .spec dt,
+body.is-dive .chips li,
+body.is-dive .chan__k,
+body.is-dive .study__side h4 {
+  font-size: 2.1cqw;
+}
+body.is-dive .spec dd {
+  font-size: 2.7cqw;
+}
+body.is-dive .sec h3 {
+  font-size: 7.2cqw;
+}
+body.is-dive .sec__n {
+  font-size: 2.1cqw;
+}
+body.is-dive .sec p {
+  font-size: 3cqw;
+  padding-left: 5.4cqw;
+}
+body.is-dive .stage__n {
+  font-size: 2cqw;
+}
+body.is-dive .stage__label {
+  font-size: 3.6cqw;
+}
+body.is-dive .stage__detail {
+  font-size: 2.7cqw;
+}
+body.is-dive .notes p {
+  font-size: 2.4cqw;
+}
+body.is-dive .src__head {
+  font-size: 2.3cqw;
+}
+body.is-dive .src__code {
+  font-size: 2.05cqw;
+}
+body.is-dive .src__code .ln {
+  padding-left: 6.4cqw;
+}
+body.is-dive .src__code .ln::before {
+  width: 4.4cqw;
+}
+body.is-dive .chan__v {
+  font-size: 5cqw;
+}
+body.is-dive .margin-note {
+  font-size: 9cqw;
+}
+body.is-dive .plate__body,
+body.is-dive .study,
+body.is-dive .about {
+  grid-template-columns: 1fr;
+  gap: 6cqw;
+  /* Stack from the top; the slack belongs to the dive band, not the gutters. */
+  align-content: start;
+}
+body.is-dive .about {
+  /* The phone layout stacks from the top and leaves the bottom band to the
+     next stratum, so the panel must not stretch to fill it. */
+  flex: none;
+}
+body.is-dive .about__links {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 3.4cqw;
+}
+body.is-dive .about__links li:nth-child(odd) {
+  border-left: 0;
+}
+body.is-dive .about__links li:nth-child(n + 3) {
+  border-top: 1px solid var(--hair);
+}
+body.is-dive .about__link-k {
+  font-size: 2cqw;
+}
+body.is-dive .about__link-v {
+  font-size: 2.7cqw;
+}
+body.is-dive .about__link-arrow {
+  font-size: 2.4cqw;
+}
+body.is-dive .flow {
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+}
+body.is-dive .stage + .stage {
+  padding-left: 0;
+  padding-top: 2.2cqw;
+  border-left: 0;
+  border-top: 1px solid var(--hair);
+}
+body.is-dive .chan a {
+  grid-template-columns: 1fr auto;
+}
+body.is-dive .chan__k {
+  grid-column: 1 / -1;
+}
+
+/* --- arrival ----------------------------------------------------------------
+   A page's contents hold back while the camera flies in, then cascade into
+   place once it lands: each item rises a touch out of a soft blur, 55ms after
+   the one before. Going out is instant - only arriving is animated. Parallax
+   uses the separate `translate` property (set in build.ts), so it never
+   fights this `transform`. */
+.rv {
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 640ms var(--ease-out),
+    filter 460ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 55ms + 30ms);
+}
+.is-entering .rv {
+  opacity: 0;
+  transform: translateY(1.5cqw);
+  filter: blur(0.22cqw);
+  transition-duration: 0s;
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv {
+    transition: opacity 200ms ease;
+    transition-delay: 0s;
+  }
+  .is-entering .rv {
+    transform: none;
+    filter: none;
+  }
+}

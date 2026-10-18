@@ -1,0 +1,153 @@
+/*
+ * Candy Inc is a trial cut: letters are clean, digits are replaced by
+ * watermarked star glyphs and most punctuation is absent. It is therefore
+ * used only on headings that contain neither. The fallback is a deliberate
+ * pairing, not an accident. License: public/fonts/CandyInc-LICENSE.txt.
+ */
+@font-face {
+  font-family: 'Candy Inc';
+  src:
+    url('/fonts/CandyInc.woff') format('woff'),
+    url('/fonts/CandyInc.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--void);
+  color: var(--paper);
+  font-family: var(--mono);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+body.is-ready {
+  opacity: 1;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--void);
+}
+
+#field {
+  position: fixed;
+  inset: 0;
+  display: block;
+  z-index: 0;
+}
+
+/* The hero's pixel night, between the stars and the world. One cell per art
+   pixel, scaled up by the browser: nearest-neighbour only. */
+#horizon {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  will-change: transform, opacity;
+}
+
+/* Without WebGL the canvas hides itself and this carries the ground tone. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(120% 90% at 50% 45%, rgba(242, 240, 234, 0.035), transparent 60%),
+    var(--void);
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#stage:active {
+  cursor: grabbing;
+}
+
+#world {
+  position: absolute;
+  inset: 0;
+}
+
+.node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+  /*
+   * Every plate is its own query container, so all of its typography can be
+   * written once in cqw and stay proportional whether the plate is authored
+   * landscape for desktop or portrait for the mobile descent.
+   */
+  container-type: size;
+}
+
+.node a,
+.node button {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.noscript {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-content: center;
+  padding: 10vw;
+  background: var(--void);
+}
+.noscript h1 {
+  font: 400 clamp(48px, 12vw, 120px) / 1 var(--display);
+  margin: 0 0 24px;
+}
+.noscript p {
+  max-width: 54ch;
+  font: 300 16px/1.8 var(--mono);
+  color: var(--paper-dim);
+}
+.noscript a {
+  color: var(--red-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+  .portal__mark {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,53 @@
+/*
+ * Three colours, strictly rationed.
+ *
+ *   Ground   pure black, ~85% of any frame
+ *   Content  pixel white
+ *   Signal   red, and only red
+ *
+ * No warm tint, no second accent, no gradients used as decoration. The
+ * background is black and white only - red is reserved for content, so the
+ * grid, the vignette and the atmosphere never touch it.
+ *
+ * Two reds exist for one reason: #d71935 on black is 3.85:1, which is right
+ * for marks, rules and stamps but short of the 4.5:1 small text needs. Anything
+ * set at label size uses --red-soft (6.5:1) instead.
+ *
+ * Dark by intent. There is no light theme, the same way an oscilloscope does
+ * not have one.
+ */
+:root {
+  --void: #080808;
+  --void-2: #101010;
+  --void-3: #181818;
+
+  --paper: #f2f0ea;
+  --paper-dim: rgba(242, 240, 234, 0.66);
+  --paper-faint: rgba(242, 240, 234, 0.38);
+  --paper-ghost: rgba(242, 240, 234, 0.18);
+  --hair: rgba(242, 240, 234, 0.13);
+
+  /* Graphic signal: markers, cut lines, rules, stamps. */
+  --red: #d71935;
+  /* The same signal at label size, lifted to clear contrast on black. */
+  --red-soft: #ff5668;
+  /* Secondary labels: muted, but lifted off the deep red so 9px still reads. */
+  --red-mute: rgba(255, 86, 104, 0.58);
+  --red-dim: rgba(215, 25, 53, 0.62);
+  --red-ghost: rgba(215, 25, 53, 0.22);
+
+  /* Display face for headings. Instrument Serif stays behind it: the trial
+     cut of Candy Inc has no digits (they render as watermarked stars) and no
+     punctuation, so fallback is deliberate, not a failure. */
+  --display: 'Candy Inc', 'Instrument Serif', 'Times New Roman', Georgia, serif;
+  --serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --track: 0.26em;
+  --track-wide: 0.34em;
+
+  /* Motion. A strong ease-out for things arriving, an ease-in-out for things
+     moving across the screen. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
