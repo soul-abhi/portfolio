@@ -581,16 +581,20 @@
   pointer-events: none;
 }
 
-/* The lantern-bearer off the WHO plate's top-right corner (render.ts).
-   Positions are shares of the sprite: flame at (2, 18), lantern at (22, 40)
-   on its 35 x 57 grid. */
+/* The lantern-bearer peeking out from behind the WHO plate's right edge, high
+   up (render.ts). It sits under the plate, mirrored so its face and raised
+   flame lean out past the border while the rest stays hidden. Positions are
+   shares of the unmirrored sprite: flame at (2, 18), lantern at (22, 40) on
+   its 35 x 57 grid. */
 .wraith {
   position: absolute;
-  top: -15cqw;
-  right: 2.5cqw;
+  top: 7cqw;
+  right: -6.8cqw;
   width: 12cqw;
   aspect-ratio: 35 / 57;
-  z-index: 2;
+  z-index: -1;
+  scale: -1 1;
+  rotate: 5deg;
   pointer-events: none;
   animation: wraith-float 5.6s ease-in-out infinite;
 }

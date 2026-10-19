@@ -41,10 +41,10 @@ function highlight(code: string, lang: string): string {
 }
 
 /**
- * The lantern-bearer hovering off the WHO plate's top-right corner. A sibling
- * of the plate, not a child, so the plate's crack mask doesn't clip it where
- * it breaks out of the frame. The glows and embers sit over the flame in its
- * raised hand and the green lantern it carries.
+ * The lantern-bearer peeking out from behind the WHO plate's right edge. A
+ * sibling of the plate, not a child, so it can sit under the plate and the
+ * crack mask doesn't clip the half that leans out. The glows and embers sit
+ * over the flame in its raised hand and the green lantern it carries.
  */
 const WRAITH = `<div class="wraith" aria-hidden="true">
   <img class="wraith__body" src="${wraithUrl}" alt="" width="35" height="57" draggable="false" />
