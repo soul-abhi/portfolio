@@ -7,6 +7,7 @@ const KIND_LABEL: Record<string, string> = {
   study: 'CASE FILE',
   mechanism: 'MECHANISM',
   source: 'SOURCE',
+  gallery: 'SHOWCASE',
   about: 'SUBJECT',
   contact: 'CHANNELS',
   marginalia: 'NOTE',
@@ -142,7 +143,7 @@ export class Hud {
         const title = n.spec.title ?? n.id;
         const name = title === n.parent?.spec.title ? '' : `<span>${title}</span>`;
         return `<button type="button" data-goto="${n.id}"><em>${
-          KIND_LABEL[n.kind] ?? ''
+          n.spec.label ?? KIND_LABEL[n.kind] ?? ''
         }</em>${name}</button>`;
       })
       .join('');

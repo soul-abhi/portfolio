@@ -7,6 +7,7 @@ export type NodeKind =
   | 'study'
   | 'mechanism'
   | 'source'
+  | 'gallery'
   | 'about'
   | 'contact'
   | 'marginalia';
@@ -26,10 +27,21 @@ export interface Pair {
   v: string;
 }
 
+export interface Shot {
+  /** Path under public/, e.g. /clients/name.webp */
+  src: string;
+  alt: string;
+  caption: string;
+  /** Spans two grid columns. */
+  wide?: boolean;
+}
+
 export interface Link {
   label: string;
   value: string;
   href: string;
+  /** Links sharing a group render together as one titled column. */
+  group?: string;
 }
 
 /**
@@ -44,6 +56,8 @@ export interface NodeSpec {
   size?: [number, number];
   /** Caption for the marker the parent draws over this child. */
   portal?: string;
+  /** Overrides the kind's default header label on the plate and in the depth trail. */
+  label?: string;
   children?: NodeSpec[];
 
   title?: string;
@@ -63,6 +77,7 @@ export interface NodeSpec {
   stages?: Stage[];
   notes?: string[];
   links?: Link[];
+  shots?: Shot[];
   file?: string;
   lang?: 'ts' | 'py' | 'go';
   code?: string;

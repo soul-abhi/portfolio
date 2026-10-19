@@ -10,6 +10,7 @@ import { ZOOM_STEP, type WorldNode } from './world/types';
 
 import { Intro } from './intro/gate';
 import { attachTitleFlame } from './fx/flame';
+import { attachChroma } from './fx/chroma';
 
 import './styles/tokens.css';
 import './styles/base.css';
@@ -37,6 +38,8 @@ const world = new World(worldLayer, WORLD, dive);
 // A small fire on the dot of the i in the surface title.
 const rootTitle = worldLayer.querySelector<HTMLElement>('.root__title');
 if (rootTitle) attachTitleFlame(rootTitle, reduceMotion);
+
+attachChroma(worldLayer, reduceMotion);
 
 function sizeToViewport(): void {
   const w = window.innerWidth;

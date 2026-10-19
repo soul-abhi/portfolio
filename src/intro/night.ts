@@ -20,7 +20,21 @@ export interface NightOpts {
   sky: boolean;
   /** Where the moon hangs, as shares of the width and of the sky's height. */
   moon: readonly [number, number];
+  /**
+   * Scroll the land past like the view from a train: far ridge slowest, near
+   * ridge faster, and a foreground shore of reeds and pines fastest. The moon
+   * and the water stay put, as they would.
+   */
+  drift?: boolean;
 }
+
+/** Drift speeds, in cells per second. */
+const DRIFT_FAR = 0.8;
+const DRIFT_NEAR = 2.2;
+const DRIFT_FORE = 7;
+/** The foreground shore: one seamless strip, tiled. */
+const FORE_W = 640;
+const FORE_H = 40;
 
 type Rect = [number, number, number, number];
 const FAR = set.far as Rect;
@@ -52,6 +66,7 @@ export class Night {
   private img = new Image();
   private loaded = false;
   private base = document.createElement('canvas');
+  private fore: HTMLCanvasElement | null = null;
   private world = document.createElement('canvas');
   private worldCtx: CanvasRenderingContext2D;
 
@@ -146,6 +161,11 @@ export class Night {
     ctx.globalAlpha = 1;
     ctx.clearRect(0, 0, this.cols, this.rows);
     ctx.drawImage(this.base, 0, 0);
+    const drift = this.opts.drift === true;
+    if (drift && this.loaded) {
+      const s = t / 1000;
+      this.land(ctx, this.anchor() - Math.round(s * DRIFT_FAR), this.anchor() - Math.round(s * DRIFT_NEAR));
+    }
 
     for (const s of this.stars) {
       const tw = 0.55 + 0.45 * Math.sin(t * s.speed + s.phase);
@@ -199,6 +219,49 @@ export class Night {
       ctx.fillStyle = `rgba(90, 110, 140, ${(v - 0.6) * 0.9})`;
       ctx.fillRect(g.x + drift, g.y, g.len, 1);
     }
+
+    if (drift) {
+      const fore = (this.fore ??= shore());
+      const x0 = -Math.round(((t / 1000) * DRIFT_FORE) % FORE_W);
+      for (let x = x0; x < this.cols; x += FORE_W) ctx.drawImage(fore, x, this.rows - FORE_H);
+    }
+  }
+
+  /** Where the ridge tiles start so the tower stands right of centre, behind the lantern. */
+  private anchor(): number {
+    return Math.round(this.cols * 0.74) - 173;
+  }
+
+  /** The ridges, their reflection and the water's ripple lines, at the given tile offsets. */
+  private land(ctx: CanvasRenderingContext2D, farX: number, nearX: number): void {
+    const { cols, rows, horizon } = this;
+    ctx.imageSmoothingEnabled = false;
+    const tile = (r: Rect, offset: number, bottom: number, flip: boolean, alpha: number) => {
+      ctx.globalAlpha = alpha;
+      const start = ((offset % r[2]) - r[2]) % r[2];
+      for (let x = start; x < cols; x += r[2]) {
+        if (!flip) {
+          ctx.drawImage(this.img, r[0], r[1], r[2], r[3], x, bottom - r[3], r[2], r[3]);
+        } else {
+          ctx.save();
+          ctx.translate(0, bottom * 2);
+          ctx.scale(1, -1);
+          ctx.drawImage(this.img, r[0], r[1], r[2], r[3], x, bottom - r[3], r[2], r[3]);
+          ctx.restore();
+        }
+      }
+      ctx.globalAlpha = 1;
+    };
+    tile(FAR, farX, horizon, false, 1);
+    tile(NEAR, nearX, horizon + 1, false, 1);
+    tile(FAR, farX, horizon, true, 0.38);
+    tile(NEAR, nearX, horizon + 1, true, 0.5);
+    // Ripple lines break the reflection up, as still water does.
+    ctx.fillStyle = 'rgba(8, 13, 23, 0.7)';
+    for (let y = horizon + 3; y < Math.min(rows, horizon + 60); y += 3) ctx.fillRect(0, y, cols, 1);
+    // A thin line where the water meets the land, catching the sky.
+    ctx.fillStyle = 'rgba(45, 58, 82, 0.6)';
+    ctx.fillRect(0, horizon + 1, cols, 1);
   }
 
   /** The unchanging part: sky and lake gradients, the moon, the ridges and their reflection. */
@@ -247,39 +310,75 @@ export class Night {
     ctx.putImageData(img, 0, 0);
     if (!this.loaded) return;
     ctx.imageSmoothingEnabled = false;
-
-    // Tiled so the tower stands off to the right of centre, behind the lantern.
-    const offset = Math.round(cols * 0.74) - 173;
-    const tile = (r: Rect, bottom: number, flip: boolean, alpha: number) => {
-      ctx.globalAlpha = alpha;
-      const start = ((offset % r[2]) - r[2]) % r[2];
-      for (let x = start; x < cols; x += r[2]) {
-        if (!flip) {
-          ctx.drawImage(this.img, r[0], r[1], r[2], r[3], x, bottom - r[3], r[2], r[3]);
-        } else {
-          ctx.save();
-          ctx.translate(0, bottom * 2);
-          ctx.scale(1, -1);
-          ctx.drawImage(this.img, r[0], r[1], r[2], r[3], x, bottom - r[3], r[2], r[3]);
-          ctx.restore();
-        }
-      }
-      ctx.globalAlpha = 1;
-    };
-    tile(FAR, horizon, false, 1);
-    tile(NEAR, horizon + 1, false, 1);
-    tile(FAR, horizon, true, 0.38);
-    tile(NEAR, horizon + 1, true, 0.5);
-    // Ripple lines break the reflection up, as still water does.
-    ctx.fillStyle = 'rgba(8, 13, 23, 0.7)';
-    for (let y = horizon + 3; y < Math.min(rows, horizon + 60); y += 3) ctx.fillRect(0, y, cols, 1);
-    // A thin line where the water meets the land, catching the sky.
-    ctx.fillStyle = 'rgba(45, 58, 82, 0.6)';
-    ctx.fillRect(0, horizon + 1, cols, 1);
+    // Drifting land is drawn per frame instead, over the moon, so it can pass in front of it.
+    if (!this.opts.drift) this.land(ctx, this.anchor(), this.anchor());
 
     ctx.drawImage(this.img, MOON[0], MOON[1], MOON[2], MOON[3], this.moonX - 16, this.moonY - 16, MOON[2], MOON[3]);
     this.composed = true;
   }
+}
+
+/**
+ * The near shore, as one seamless strip: a dark bank with reeds, rocks and
+ * the odd pine, each top edge catching a little moonlight. Everything wraps at
+ * FORE_W so the strip tiles without a seam.
+ */
+function shore(): HTMLCanvasElement {
+  const c = document.createElement('canvas');
+  c.width = FORE_W;
+  c.height = FORE_H;
+  const ctx = c.getContext('2d');
+  if (!ctx) return c;
+  const ink = '#0b1222';
+  const rim = '#24324d';
+  const top = new Int16Array(FORE_W).fill(FORE_H);
+  const fill = (x: number, y0: number) => {
+    const xi = ((x % FORE_W) + FORE_W) % FORE_W;
+    const y = Math.max(0, Math.round(y0));
+    ctx.fillStyle = ink;
+    ctx.fillRect(xi, y, 1, FORE_H - y);
+    if (y < top[xi]!) top[xi] = y;
+  };
+  seed = 0x51ed27;
+  // The bank: a low rolling line, periodic so it wraps.
+  for (let x = 0; x < FORE_W; x++) {
+    const u = (x / FORE_W) * Math.PI * 2;
+    fill(x, FORE_H - 7 - 2 * Math.sin(u * 3) - 1.5 * Math.sin(u * 7 + 1) - Math.sin(u * 13 + 2));
+  }
+  // Rocks.
+  for (let i = 0; i < 14; i++) {
+    const cx = Math.floor(rnd() * FORE_W);
+    const w = 3 + Math.floor(rnd() * 6);
+    const h = 2 + rnd() * 3;
+    for (let dx = -w; dx <= w; dx++) fill(cx + dx, FORE_H - 8 - h * Math.sqrt(1 - (dx / (w + 1)) ** 2));
+  }
+  // Reeds, in clumps.
+  for (let i = 0; i < 40; i++) {
+    const cx = Math.floor(rnd() * FORE_W);
+    const n = 3 + Math.floor(rnd() * 6);
+    for (let k = 0; k < n; k++) {
+      const x = cx + Math.floor((rnd() - 0.5) * 8);
+      const h = 4 + Math.floor(rnd() * 9);
+      const lean = (rnd() - 0.5) * 0.5;
+      for (let j = 0; j < h; j++) fill(x + Math.round(lean * j), FORE_H - 9 - j);
+    }
+  }
+  // Pines: a stack of widening tiers on a short trunk.
+  for (let i = 0; i < 5; i++) {
+    const cx = Math.floor(((i + rnd() * 0.6) / 5) * FORE_W);
+    const h = 20 + Math.floor(rnd() * 12);
+    const base = FORE_H - 9;
+    for (let y = 0; y < h; y++) {
+      const tier = (y % 6) / 6;
+      const half = Math.max(0, Math.round((y / h) * 7 * (0.55 + 0.45 * tier)));
+      for (let dx = -half; dx <= half; dx++) fill(cx + dx, base - h + y);
+    }
+    fill(cx, base - 2);
+  }
+  // Moonlight on whatever is highest in each column.
+  ctx.fillStyle = rim;
+  for (let x = 0; x < FORE_W; x++) if (top[x]! < FORE_H) ctx.fillRect(x, top[x]!, 1, 1);
+  return c;
 }
 
 function hex(h: string): [number, number, number] {

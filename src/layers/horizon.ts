@@ -1,5 +1,6 @@
 import type { Camera } from '../core/camera';
 import { Night } from '../intro/night';
+import { Dragon } from './dragon';
 import { ZOOM_STEP } from '../world/types';
 
 /**
@@ -23,7 +24,8 @@ const FADE = Math.log(ZOOM_STEP) * 0.5;
 
 export class Horizon {
   private ctx: CanvasRenderingContext2D;
-  private night = new Night({ sky: false, moon: [0.8, 0.34] });
+  private night: Night;
+  private dragon = new Dragon();
   private cols = 1;
   private rows = 1;
   private shown = -1;
@@ -32,6 +34,8 @@ export class Horizon {
     private canvas: HTMLCanvasElement,
     private still: boolean,
   ) {
+    // The land drifts past like the view from a train, unless motion is reduced.
+    this.night = new Night({ sky: false, moon: [0.8, 0.34], drift: !still });
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('horizon: no 2d context');
     this.ctx = ctx;
@@ -63,6 +67,7 @@ export class Horizon {
     }
     if (a <= 0.001) return;
     this.night.paintTo(this.still ? 0 : t * 1000, this.ctx);
+    if (!this.still) this.dragon.paint(this.ctx, t, this.cols, this.rows);
   }
 }
 

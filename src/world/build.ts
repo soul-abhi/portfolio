@@ -1,4 +1,5 @@
 import type { Camera } from '../core/camera';
+import { decay } from './decay';
 import { renderNode } from './render';
 import { ZOOM_STEP, type NodeSpec, type WorldNode } from './types';
 
@@ -61,12 +62,22 @@ export class World {
     el.style.zIndex = String(10 + depth);
     el.innerHTML = renderNode(spec);
 
+    // Every plate wears its own decay along the border (src/world/decay.ts),
+    // drawn for the size it is actually built at, landscape or portrait.
+    const plate = el.querySelector<HTMLElement>(':scope > .plate');
+    if (plate) {
+      const d = decay(dw, dh, hash(spec.id));
+      plate.insertAdjacentHTML('afterbegin', d.svg);
+      plate.style.setProperty('-webkit-mask-image', d.mask);
+      plate.style.setProperty('mask-image', d.mask);
+    }
+
     // Everything a plate says is a reveal item, cascaded in on arrival; the
     // title, subtitle and header also ride at their own parallax depths.
     const body = el.querySelector<HTMLElement>(':scope > .plate, :scope > .root');
     if (body) {
       [...body.children]
-        .filter((c): c is HTMLElement => c instanceof HTMLElement && !c.classList.contains('tick'))
+        .filter((c): c is HTMLElement => c instanceof HTMLElement && !c.matches('.tick, .decay'))
         .forEach((c, i) => {
           c.classList.add('rv');
           c.style.setProperty('--i', String(i));
@@ -350,4 +361,11 @@ const NO_INSETS: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
 function smooth(t: number): number {
   const x = t < 0 ? 0 : t > 1 ? 1 : t;
   return x * x * (3 - 2 * x);
+}
+
+/** A stable 32-bit seed from a node id, so each plate decays its own way. */
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return h >>> 0;
 }

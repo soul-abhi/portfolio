@@ -45,6 +45,12 @@ const FIGURE_FROM = 450;
 const FIGURE_MS = 700;
 /** He stands at least this long, longer if the site is not ready. */
 const GATE_MIN = 1900;
+/**
+ * Scales the baked raise and hold durations so the staff comes down sooner.
+ * Applied here rather than in the sheet so `art:wanderer` can rebake freely;
+ * the strike frames themselves keep their timing.
+ */
+const WINDUP_PACE = 0.8;
 
 // ---- after the strike lands ----
 const SEAM_MS = 170;
@@ -287,7 +293,7 @@ export class Intro {
     }
     let e = t - this.playFrom;
     for (let f = TAGS.raise[0]; f < ROWS.length; f++) {
-      e -= ROWS[f]![6]!;
+      e -= ROWS[f]![6]! * (f <= TAGS.hold[1] ? WINDUP_PACE : 1);
       if (e < 0) return f;
     }
     return ROWS.length - 1;

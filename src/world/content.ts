@@ -14,36 +14,6 @@
 
 import type { NodeSpec } from './types';
 
-const neopassSource = `export async function unseal(blob: Uint8Array, phrase: string) {
-  const [salt, nonce, ct] = split(blob, 16, 24);
-
-  // Argon2id, not PBKDF2: the threat model here is an attacker who has
-  // already exfiltrated the vault and can spend a GPU-month on it.
-  const key = await argon2id({ phrase, salt, m: 256 << 10, t: 3, p: 4 });
-
-  try {
-    return decode(await xchacha.open(key, nonce, ct));
-  } finally {
-    key.fill(0); // the only copy that ever existed outside the enclave
-  }
-}`;
-
-const owlSource = `async def sweep(scope: Scope, budget: Budget) -> AsyncIterator[Finding]:
-    seen: set[str] = set()
-    queue = PriorityQueue(scope.seeds)
-
-    # Breadth is cheap, depth is not. Rank by expected information gain so a
-    # capped run still surfaces the interesting third of the surface first.
-    while not queue.empty() and budget.remaining:
-        host = await queue.get()
-        if host.key in seen or not scope.contains(host):
-            continue
-        seen.add(host.key)
-
-        async for f in probe(host, budget.lease(host.weight)):
-            queue.offer(f.derived_hosts(), gain=f.novelty)
-            yield f`;
-
 const gitrixSource = `func (h *Hunter) walk(ctx context.Context, repo *git.Repository) error {
 	// Secrets live in the diff, not the tree. A credential committed and then
 	// "removed" is still sitting in history, which is the whole point.
@@ -67,7 +37,7 @@ export const WORLD: NodeSpec = {
   kind: 'root',
   size: [1800, 1000],
   title: 'ABHISHEK',
-  sub: 'Security engineering · systems · offensive tooling',
+  sub: 'Full-stack development · DevOps · system reliability',
   // The surface reads as one route in a loose ring round the name, clockwise
   // from who on the left, through I-VI, to reach at the lower left. The ring
   // is deliberately uneven, but every marker keeps clear of the title block
@@ -79,16 +49,16 @@ export const WORLD: NodeSpec = {
       kind: 'project',
       at: [-330, -370],
       size: [1120, 640],
-      portal: 'I · NEOPASS',
+      portal: 'I · ENTROPY_CHAOS',
       index: '01',
-      title: 'NEOPASS',
-      sub: 'A credential vault that never learns your secret',
-      year: '2025',
-      role: 'Design, cryptography, implementation',
-      status: 'In private beta',
-      stack: ['TypeScript', 'WebCrypto', 'Argon2id', 'XChaCha20', 'SQLite'],
+      title: 'ENTROPY_CHAOS',
+      sub: 'Decides whether a system can safely withstand injected failures',
+      year: '2025–2026',
+      role: 'Solo developer, system design',
+      status: 'Complete, evolving',
+      stack: ['Node.js', 'Express', 'Docker', 'Kubernetes', 'Prometheus', 'Grafana'],
       lede:
-        'Draft lede. One paragraph that states the actual problem in plain language and the single decision that made the project interesting. Two sentences, no more.',
+        'Traditional chaos engineering injects failures on a schedule, often without checking whether a system can tolerate them. ENTROPY_CHAOS introduces an explainable risk gate that evaluates live service health before authorizing pod deletion, blocking experiments when the system is unstable or observability is unavailable.',
       children: [
         {
           id: 'neopass-study',
@@ -96,27 +66,27 @@ export const WORLD: NodeSpec = {
           at: [320, -130],
           size: [1320, 780],
           portal: 'CASE FILE',
-          title: 'NEOPASS',
+          title: 'ENTROPY_CHAOS',
           sub: 'Case file',
           sections: [
             {
               h: 'The problem',
-              p: 'Draft. Describe the real constraint you were under - not the feature list. The reader should finish this paragraph understanding why the obvious approach fails.',
+              p: 'Scheduled fault injection can destabilize services that are already unhealthy, while missing telemetry can make the system’s true condition unclear.',
             },
             {
               h: 'The decision',
-              p: 'Draft. The one architectural call that everything else followed from, and what it cost you. Name the thing you gave up; that is what makes it credible.',
+              p: 'Use a weighted Resilience Risk Score based on latency, error rate, CPU, and memory, with a fail-closed policy and a recovery cooldown.',
             },
             {
               h: 'What happened',
-              p: 'Draft. Outcome in concrete terms. Numbers if you have them, an honest "unresolved" if you do not.',
+              p: 'A monitoring-to-decision-to-recovery workflow with four risk classifications, least-privilege access, a campaign harness, and 13 zero-dependency regression tests.',
             },
           ],
           metrics: [
-            { k: 'Derivation', v: '256 MiB · t=3 · p=4' },
-            { k: 'Vault format', v: 'single-file, append-only' },
-            { k: 'Server knowledge', v: 'zero' },
-            { k: 'Audit', v: 'self-reviewed, pending external' },
+            { k: 'Live signals', v: '4 health metrics' },
+            { k: 'Risk classes', v: '4 classifications' },
+            { k: 'Cooldown', v: '90 seconds minimum' },
+            { k: 'Regression tests', v: '13 passing' },
           ],
           children: [
             {
@@ -125,40 +95,17 @@ export const WORLD: NodeSpec = {
               at: [382, 182],
               size: [1280, 720],
               portal: 'MECHANISM',
-              title: 'Unseal path',
-              sub: 'What happens between a passphrase and plaintext',
+              title: 'Risk gate',
+              sub: 'How live health becomes a decision to inject a failure',
               stages: [
-                { label: 'PHRASE', detail: 'Never leaves the client. Not hashed on input, not logged, not retained after derivation.' },
-                { label: 'ARGON2ID', detail: 'Memory-hard derivation sized so a commodity GPU farm gains almost nothing over a laptop.' },
-                { label: 'XCHACHA20', detail: 'AEAD over the whole blob. A truncated or tampered vault fails closed, loudly.' },
-                { label: 'PLAINTEXT', detail: 'Lives in one zeroed buffer for the duration of the read, then is wiped in a finally block.' },
+                { label: 'MONITOR', detail: 'Prometheus scrapes service metrics every five seconds to keep the risk engine informed about current health.' },
+                { label: 'SCORE', detail: 'The engine normalizes four health signals into a weighted Resilience Risk Score from 0 to 100.' },
+                { label: 'GATE', detail: 'Chaos is permitted only when the score is below 40, metrics are available, and the cooldown has expired.' },
+                { label: 'RECOVER', detail: 'Kubernetes recreates the deleted pod while the system records the decision and continues monitoring recovery.' },
               ],
               notes: [
-                'Draft annotation. The non-obvious failure mode you hit here.',
-                'Draft annotation. Why the simpler version was wrong.',
-              ],
-              children: [
-                {
-                  id: 'neopass-src',
-                  kind: 'source',
-                  at: [432, 238],
-                  size: [1140, 520],
-                  portal: 'SOURCE',
-                  title: 'unseal()',
-                  file: 'src/vault/unseal.ts',
-                  lang: 'ts',
-                  code: neopassSource,
-                  children: [
-                    {
-                      id: 'void',
-                      kind: 'marginalia',
-                      at: [340, 170],
-                      size: [620, 200],
-                      portal: '·',
-                      text: 'You zoomed five strata deep to read a finally block. We should talk. — voidsociety',
-                    },
-                  ],
-                },
+                'Latency has the highest individual weight in the risk calculation, alongside error rate, CPU, and memory.',
+                'Missing or degraded observability fails closed, preventing a chaos action when the system’s condition is unknown.',
               ],
             },
           ],
@@ -167,68 +114,67 @@ export const WORLD: NodeSpec = {
     },
 
     {
-      id: 'owlsec',
+      id: 'denox',
       kind: 'project',
       at: [130, -405],
       size: [1120, 640],
-      portal: 'II · OWL-SEC',
+      portal: 'II · DE-NOX',
       index: '02',
-      title: 'OWL-SEC',
-      sub: 'Attack-surface reconnaissance under a fixed budget',
-      year: '2025',
-      role: 'Architecture, scheduler, rule engine',
-      status: 'Used in live engagements',
-      stack: ['Python', 'asyncio', 'Redis', 'Postgres'],
+      title: 'DE-NOX',
+      sub: 'Reclaims disk space without sacrificing active projects',
+      year: '2026',
+      role: 'Solo developer',
+      status: 'Working CLI',
+      stack: ['Rust', 'Ratatui', 'Crossterm', 'Walkdir', 'Linux'],
       lede:
-        'Draft lede. The interesting constraint was time, not coverage - state that, and the rest of the project explains itself.',
+        'Development directories accumulate regenerable dependencies and build artifacts that consume disk space. DE-NOX scans project activity rather than relying on artifact timestamps alone, then presents cleanup candidates for review before deletion.',
       children: [
         {
-          id: 'owlsec-study',
+          id: 'denox-study',
           kind: 'study',
           at: [300, -120],
           size: [1320, 780],
           portal: 'CASE FILE',
-          title: 'OWL-SEC',
+          title: 'DE-NOX',
           sub: 'Case file',
           sections: [
-            { h: 'The problem', p: 'Draft. Enumeration is unbounded and engagements are not. Explain what that does to the design.' },
-            { h: 'The decision', p: 'Draft. Treat scan budget as a currency the scheduler spends, and rank hosts by expected information gain.' },
-            { h: 'What happened', p: 'Draft. What the ranking bought you on a real target, and where it misled you.' },
+            {
+              h: 'The problem',
+              p: 'Large development workspaces accumulate node_modules, build output, and framework caches, while artifact timestamps can misrepresent whether a project is still active.',
+            },
+            {
+              h: 'The decision',
+              p: 'Scan directories without following symbolic links, assess project activity while excluding known artifact directories, and revalidate eligibility before deletion.',
+            },
+            {
+              h: 'What happened',
+              p: 'A terminal-based cleanup workflow with candidate review, safeguards, and a documented scan that identified potential reclaimable space in a real home-directory tree.',
+            },
           ],
           metrics: [
-            { k: 'Concurrency', v: 'bounded per-host leases' },
-            { k: 'Scope safety', v: 'deny-by-default' },
-            { k: 'Resumable', v: 'yes, by frontier snapshot' },
-            { k: 'Findings schema', v: 'stable, diffable' },
+            { k: 'Directories scanned', v: '8,859 directories' },
+            { k: 'Potential space', v: '11.2 GB reclaimable' },
+            { k: 'Candidates found', v: '390 directories' },
+            { k: 'Test suite', v: '22 passing tests' },
           ],
           children: [
             {
-              id: 'owlsec-mech',
+              id: 'denox-mech',
               kind: 'mechanism',
-              at: [374, 198],
+              at: [382, 182],
               size: [1280, 720],
               portal: 'MECHANISM',
-              title: 'The frontier',
-              sub: 'How a capped sweep decides what to look at next',
+              title: 'Cleanup pass',
+              sub: 'How a directory earns its way onto the delete list',
               stages: [
-                { label: 'SEEDS', detail: 'Operator-declared scope. Everything outside it is unreachable by construction, not by filter.' },
-                { label: 'LEASE', detail: 'Each host is granted a slice of the remaining budget proportional to its weight.' },
-                { label: 'PROBE', detail: 'Findings are emitted as a stream so an interrupted run is still a useful run.' },
-                { label: 'OFFER', detail: 'Derived hosts re-enter the queue ranked by novelty, closing the loop.' },
+                { label: 'SCAN', detail: 'Walk the selected filesystem tree, identify known artifact directories, and avoid following symbolic links.' },
+                { label: 'ASSESS', detail: 'Evaluate project activity using modification times while excluding artifact directories that could distort the activity signal.' },
+                { label: 'REVIEW', detail: 'Show cleanup candidates and protected directories so the user can inspect the proposed actions before proceeding.' },
+                { label: 'CONFIRM', detail: 'Revalidate candidate eligibility and path containment before deletion to reduce the risk of removing the wrong files.' },
               ],
-              notes: ['Draft annotation. The starvation bug and the fix.', 'Draft annotation. Why novelty beat depth-first.'],
-              children: [
-                {
-                  id: 'owlsec-src',
-                  kind: 'source',
-                  at: [424, 250],
-                  size: [1140, 520],
-                  portal: 'SOURCE',
-                  title: 'sweep()',
-                  file: 'owlsec/engine/sweep.py',
-                  lang: 'py',
-                  code: owlSource,
-                },
+              notes: [
+                'Dependency-folder timestamps can be misleading, so activity assessment considers the surrounding project rather than the artifact alone.',
+                'Unreadable timestamps and filesystem errors should be treated conservatively to avoid unsafe cleanup decisions.',
               ],
             },
           ],
@@ -244,12 +190,13 @@ export const WORLD: NodeSpec = {
       portal: 'III · GITRIXHUNT',
       index: '03',
       title: 'GITRIXHUNT',
-      sub: 'Secrets do not leave when you delete the line',
-      year: '2024',
-      role: 'Author',
-      status: 'Open source',
-      stack: ['Go', 'libgit2', 'Shannon entropy'],
-      lede: 'Draft lede. A scanner that reads history rather than the working tree, and why that distinction is the whole tool.',
+      sub: 'Finds beginner-friendly open-source issues beyond labels',
+      year: '2026',
+      role: 'Solo developer, full stack',
+      status: 'In development',
+      stack: ['Next.js', 'TypeScript', 'PostgreSQL', 'Octokit', 'LLMs', 'Vercel'],
+      lede:
+        'Open-source issue labels can be stale, ambiguous, or misleading for newcomers trying to find approachable work. GitrixHunt combines scheduled issue ingestion, rule-based filtering, and LLM-assisted scoring to help developers discover issues using richer signals than labels alone.',
       children: [
         {
           id: 'gitrix-study',
@@ -260,15 +207,24 @@ export const WORLD: NodeSpec = {
           title: 'GITRIXHUNT',
           sub: 'Case file',
           sections: [
-            { h: 'The problem', p: 'Draft. A removed credential is a committed credential. Most tooling scans the wrong snapshot.' },
-            { h: 'The decision', p: 'Draft. Walk patches, not trees, and pay the cost of a full history traversal to get it right.' },
-            { h: 'What happened', p: 'Draft. False-positive rate, and the fixture heuristic that made the output readable by humans.' },
+            {
+              h: 'The problem',
+              p: 'Beginner contributors can waste time on issues that are already assigned, closed, poorly described, or more difficult than their labels suggest.',
+            },
+            {
+              h: 'The decision',
+              p: 'Separate scheduled ingestion and scoring from the browsing path, store precomputed results in PostgreSQL, and generate contextual guidance on demand with content-hash caching.',
+            },
+            {
+              h: 'What happened',
+              p: 'A two-path architecture designed to reduce repeated GitHub and LLM calls while surfacing scored issues with estimated difficulty, required skills, time, category, reasoning, and potential red flags.',
+            },
           ],
           metrics: [
-            { k: 'Traversal', v: 'patch-level, all refs' },
-            { k: 'Signal gate', v: 'rule match + entropy floor' },
-            { k: 'Throughput', v: 'draft: n commits/s' },
-            { k: 'Output', v: 'commit · rule · line' },
+            { k: 'Batch scoring', v: 'About 20 issues per call' },
+            { k: 'Beginner score', v: '0–100 scale' },
+            { k: 'Architecture', v: '2 separate paths' },
+            { k: 'Guide caching', v: 'Content-hash based' },
           ],
           children: [
             {
@@ -277,15 +233,18 @@ export const WORLD: NodeSpec = {
               at: [390, 168],
               size: [1280, 720],
               portal: 'MECHANISM',
-              title: 'Two gates',
-              sub: 'Why one filter is never enough',
+              title: 'Scoring pipeline',
+              sub: 'How a raw issue becomes a scored, guided recommendation',
               stages: [
-                { label: 'PATCH', detail: 'Added lines only. A deletion is someone else’s problem; an addition is the leak.' },
-                { label: 'RULE', detail: 'Shape match for known credential formats. High recall, deliberately poor precision.' },
-                { label: 'ENTROPY', detail: 'The second gate. Kills the example keys, the docs, the test fixtures, the placeholders.' },
-                { label: 'EMIT', detail: 'Stable identifiers so the same finding is the same finding across runs.' },
+                { label: 'INGEST', detail: 'A scheduled worker fetches repository issues and stores candidate records for processing.' },
+                { label: 'FILTER', detail: 'Rule-based checks remove closed, assigned, archived, empty, and pull-request-linked issues before expensive scoring.' },
+                { label: 'SCORE', detail: 'An LLM evaluates batches of issues and records a beginner score, difficulty, skills, time estimate, category, reasoning, and red flags.' },
+                { label: 'GUIDE', detail: 'When a contributor opens an issue, the system generates contextual guidance and caches it by content hash to avoid unnecessary regeneration.' },
               ],
-              notes: ['Draft annotation. The fixture problem.', 'Draft annotation. What entropy alone gets wrong.'],
+              notes: [
+                'PostgreSQL acts as the durable processing queue, using unscored records to identify work that remains to be processed.',
+                'Background ingestion and scoring are kept separate from the browsing path to limit expensive work during user requests.',
+              ],
               children: [
                 {
                   id: 'gitrix-src',
@@ -310,15 +269,16 @@ export const WORLD: NodeSpec = {
       kind: 'project',
       at: [690, 40],
       size: [1120, 640],
-      portal: 'IV · SKILLWALLET',
+      portal: 'IV · BIXBEE',
       index: '04',
-      title: 'SKILLWALLET',
-      sub: 'Credentials you can verify without phoning home',
-      year: '2025',
-      role: 'Protocol design, frontend',
-      status: 'Prototype',
-      stack: ['TypeScript', 'Ed25519', 'IndexedDB'],
-      lede: 'Draft lede. What a verifiable credential has to prove, and to whom, before any of it is useful.',
+      title: 'BIXBEE',
+      sub: 'Express emotions anonymously through immersive interactive experiences',
+      year: '2026',
+      role: 'Frontend developer',
+      status: 'Frontend prototype',
+      stack: ['React', 'Vite', 'GSAP', 'Three.js', 'Tailwind CSS'],
+      lede:
+        'Bixbee explores anonymous emotional expression through an immersive, interaction-led web experience. Its frontend combines editorial styling, scroll-driven storytelling, and WebGL visuals to make the interface feel more like a guided experience than a conventional content page.',
       children: [
         {
           id: 'skill-study',
@@ -326,18 +286,48 @@ export const WORLD: NodeSpec = {
           at: [300, -120],
           size: [1320, 780],
           portal: 'CASE FILE',
-          title: 'SKILLWALLET',
+          title: 'BIXBEE',
           sub: 'Case file',
           sections: [
-            { h: 'The problem', p: 'Draft. Verification that requires a live issuer is not verification, it is a dependency.' },
-            { h: 'The decision', p: 'Draft. Offline-first signatures, revocation as a published set rather than a lookup.' },
-            { h: 'What happened', p: 'Draft. Where the model held and where revocation latency bit.' },
+            {
+              h: 'The problem',
+              p: 'Conventional web layouts can feel static and impersonal when the intended experience depends on emotion, discovery, and a sense of progression.',
+            },
+            {
+              h: 'The decision',
+              p: 'Combine React and Vite with GSAP-driven motion, Three.js visuals, and a responsive layout to build a more expressive interface.',
+            },
+            {
+              h: 'What happened',
+              p: 'A frontend prototype centered on scroll-based reveals and interactive visual elements, with responsive behavior and explicit lifecycle cleanup for animation and rendering resources.',
+            },
           ],
           metrics: [
-            { k: 'Signature', v: 'Ed25519 detached' },
-            { k: 'Verification', v: 'fully offline' },
-            { k: 'Revocation', v: 'published accumulator' },
-            { k: 'Storage', v: 'local, exportable' },
+            { k: 'Frontend', v: 'React and Vite' },
+            { k: 'Motion system', v: 'GSAP ScrollTrigger' },
+            { k: '3D visuals', v: 'Three.js WebGL' },
+            { k: 'Styling', v: 'Tailwind CSS' },
+          ],
+          children: [
+            {
+              id: 'skill-mech',
+              kind: 'mechanism',
+              at: [382, 182],
+              size: [1280, 720],
+              portal: 'MECHANISM',
+              title: 'Experience flow',
+              sub: 'How the interface paces a visitor through the story',
+              stages: [
+                { label: 'INTRODUCE', detail: 'Establish the experience with an editorial interface that frames anonymous emotional expression as the central interaction.' },
+                { label: 'REVEAL', detail: 'Use scroll-driven animation to reveal content progressively and create a more deliberate visual rhythm.' },
+                { label: 'INTERACT', detail: 'Combine interface controls and WebGL visuals to give the experience a more dynamic, exploratory feel.' },
+                { label: 'ADAPT', detail: 'Adjust the presentation for smaller screens, replacing desktop-oriented pinned storytelling with a more suitable stacked layout.' },
+              ],
+              notes: [
+                'Desktop storytelling can use pinned scroll sections, while mobile layouts should prioritize a readable stacked flow.',
+                'Animation callbacks and WebGL resources require explicit cleanup to avoid lingering work after components unmount.',
+              ],
+            },
           ],
         },
       ],
@@ -348,15 +338,16 @@ export const WORLD: NodeSpec = {
       kind: 'project',
       at: [400, 360],
       size: [1120, 640],
-      portal: 'V · VOIDCTF',
+      portal: 'V · SHANTIKUNJ LMS',
       index: '05',
-      title: 'VOIDCTF',
-      sub: 'A capture-the-flag platform that survives its own players',
+      title: 'SHANTIKUNJ LMS',
+      sub: 'Coordinates audiobook production from translation to publication',
       year: '2024',
-      role: 'Infrastructure, challenge isolation',
-      status: 'Ran two events',
-      stack: ['Docker', 'nsjail', 'Node', 'Traefik'],
-      lede: 'Draft lede. The hard part of a CTF platform is not scoring, it is that every participant is actively attacking you.',
+      role: 'Full-stack developer',
+      status: 'Application prototype',
+      stack: ['React', 'Express', 'MongoDB', 'JWT', 'Cloudinary'],
+      lede:
+        'Shantikunj Audiobooks LMS organizes audiobook production into a role-based workflow that moves from source-book setup and text translation through review, recording, audio checks, and publication. It provides dedicated work queues and permissions for each stage of the process.',
       children: [
         {
           id: 'void-study',
@@ -364,56 +355,148 @@ export const WORLD: NodeSpec = {
           at: [300, -120],
           size: [1320, 780],
           portal: 'CASE FILE',
-          title: 'VOIDCTF',
+          title: 'SHANTIKUNJ LMS',
           sub: 'Case file',
           sections: [
-            { h: 'The problem', p: 'Draft. Hostile users with shell access by design. State the isolation requirement that follows.' },
-            { h: 'The decision', p: 'Draft. One disposable namespace per attempt, no shared writable state, aggressive reaping.' },
-            { h: 'What happened', p: 'Draft. What broke during the live event and what you changed at 2am.' },
+            {
+              h: 'The problem',
+              p: 'Audiobook production involves multiple contributors and review stages, making handoffs, ownership, and approval status difficult to coordinate without a shared workflow.',
+            },
+            {
+              h: 'The decision',
+              p: 'Model the process as staged tasks with role-based authorization, claim and lock behavior, review actions, and support for file uploads or external links.',
+            },
+            {
+              h: 'What happened',
+              p: 'A documented eight-step workflow across six defined roles, with role-specific dashboards and a unified work queue for managing translation and audio production.',
+            },
           ],
           metrics: [
-            { k: 'Isolation', v: 'per-attempt namespace' },
-            { k: 'Teardown', v: 'unconditional, timed' },
-            { k: 'Events run', v: '2' },
-            { k: 'Escapes', v: 'draft: none observed' },
+            { k: 'Workflow roles', v: '6 defined roles' },
+            { k: 'Process stages', v: '8 documented steps' },
+            { k: 'Application layers', v: '2 major layers' },
+            { k: 'Backend', v: 'Express API' },
+          ],
+          children: [
+            {
+              id: 'void-mech',
+              kind: 'mechanism',
+              at: [382, 182],
+              size: [1280, 720],
+              portal: 'MECHANISM',
+              title: 'Production workflow',
+              sub: 'How a book moves from registration to a published audiobook',
+              stages: [
+                { label: 'REGISTER', detail: 'The Central Team adds a book and initiates the audiobook production workflow.' },
+                { label: 'TRANSLATE', detail: 'A Text Translator claims the task and submits translated text as a file or link.' },
+                { label: 'REVIEW', detail: 'Text Checkers and SPOCs review submissions, request corrections when needed, and move approved work forward.' },
+                { label: 'PUBLISH', detail: 'Recorders submit audio, Audio Checkers and SPOCs complete reviews, and the Central Team publishes approved work.' },
+              ],
+              notes: [
+                'Users can hold multiple roles, so permissions must be checked against the specific action rather than a single fixed role.',
+                'Cloudinary can support media uploads, while link-based submissions provide an alternative workflow.',
+              ],
+            },
           ],
         },
       ],
     },
 
     {
-      id: 'denox',
+      id: 'owlsec',
       kind: 'project',
       at: [-120, 400],
       size: [1120, 640],
-      portal: 'VI · DE-NOX',
+      portal: 'VI · WEBSITES',
       index: '06',
-      title: 'DE-NOX',
-      sub: 'Reading JavaScript that was written to be unreadable',
-      year: '2024',
-      role: 'Author',
-      status: 'Tooling, internal',
-      stack: ['TypeScript', 'AST', 'partial evaluation'],
-      lede: 'Draft lede. Obfuscation is a transformation, and most transformations have an inverse if you are patient.',
+      title: 'WEBSITES',
+      sub: 'Everything I’ve built, all in one place',
+      year: '2025',
+      role: 'Draft. e.g. Design and development',
+      status: 'Draft status',
+      stack: ['Draft', 'stack', 'entries'],
+      lede:
+        'These are snapshots of my projects, and the URLs are there for you to explore. Feel free to navigate through them, investigate how things work, and see what I’ve built for yourself. Every project you see here is mine, built from my own ideas and execution.',
       children: [
         {
-          id: 'denox-study',
-          kind: 'study',
+          id: 'owlsec-showcase',
+          kind: 'gallery',
           at: [300, -120],
           size: [1320, 780],
-          portal: 'CASE FILE',
-          title: 'DE-NOX',
-          sub: 'Case file',
-          sections: [
-            { h: 'The problem', p: 'Draft. String arrays, control-flow flattening, dead branches. Name what you actually had to undo.' },
-            { h: 'The decision', p: 'Draft. Partial evaluation over the AST instead of pattern-matching known packers.' },
-            { h: 'What happened', p: 'Draft. The sample it could not recover, and why.' },
+          portal: 'SHOWCASE',
+          title: 'WEBSITES',
+          shots: [
+            { src: '/clients/voidctf.webp', alt: 'VOID CTF landing page', caption: 'VOID CTF', wide: true },
+            { src: '/clients/root2rise.webp', alt: 'Root2Rise landing page', caption: 'Root2Rise' },
+            { src: '/clients/bixbee.webp', alt: 'BIXBEE landing page', caption: 'BIXBEE' },
+            { src: '/clients/gitrixhunt.webp', alt: 'GitrixHunt landing page', caption: 'GitrixHunt' },
+            { src: '/clients/blockcraft.webp', alt: 'BlockCraft Realms landing page', caption: 'BlockCraft Realms' },
+            {
+              src: '/clients/entropy-chaos.webp',
+              alt: 'ENTROPY_CHAOS risk gate dashboard in Grafana',
+              caption: 'ENTROPY_CHAOS · Risk Gate',
+              wide: true,
+            },
+            { src: '/clients/blockcraft-mechanics.webp', alt: 'BlockCraft Realms mechanics section', caption: 'BlockCraft · Mechanics' },
+            { src: '/clients/gitrixhunt-guide.webp', alt: 'GitrixHunt AI guide section', caption: 'GitrixHunt · AI Guide' },
+            { src: '/clients/denox.webp', alt: 'DE-NOX terminal cleanup interface', caption: 'DE-NOX' },
           ],
-          metrics: [
-            { k: 'Passes', v: 'draft: n, fixpoint' },
-            { k: 'Approach', v: 'partial evaluation' },
-            { k: 'Scope', v: 'ES2020 subset' },
-            { k: 'Correctness', v: 'differential against original' },
+          children: [
+            {
+              id: 'owlsec-study',
+              kind: 'study',
+              // The empty bottom-right cell of the 4x3 shot grid.
+              at: [450, 234],
+              size: [1320, 780],
+              portal: 'WHY ?',
+              label: 'WHY ?',
+              title: 'WEBSITES',
+              sections: [
+                {
+                  h: 'Why build them?',
+                  p: 'Tutorials promised “real projects” and delivered a to-do app. So I built a Minecraft gallery, a CTF platform, and a node_modules shredder instead.',
+                },
+                {
+                  h: 'Why not a template?',
+                  p: 'Templates are great if you want to look like four thousand other sites. I fought my own CSS at 3am instead and called it a design decision.',
+                },
+                {
+                  h: 'Why should you care?',
+                  p: 'Honestly, you shouldn’t. But you zoomed this far, so the links are one level down. If something breaks, congrats: you found my next bug.',
+                },
+              ],
+              metrics: [
+                { k: 'Clients', v: 'None. I am the client.' },
+                { k: 'Live sites', v: '5, last time I checked' },
+                { k: 'Repositories', v: '6, commits unreviewed' },
+                { k: 'Sleep schedule', v: 'Deprecated' },
+              ],
+              children: [
+                {
+                  id: 'owlsec-links',
+                  kind: 'contact',
+                  at: [382, 182],
+                  size: [1320, 780],
+                  portal: 'LINKS',
+                  label: 'LINKS',
+                  title: 'Live & source',
+                  sub: 'Open them up and look around.',
+                  links: [
+                    { group: 'LIVE', label: 'BlockCraft', value: 'minecraft-showcase.netlify.app', href: 'https://minecraft-showcase.netlify.app/' },
+                    { group: 'LIVE', label: 'Shantikunj LMS', value: 'shantikunj-lms.netlify.app', href: 'https://shantikunj-lms.netlify.app/home' },
+                    { group: 'LIVE', label: 'BIXBEE', value: 'bixbee.netlify.app', href: 'https://bixbee.netlify.app/' },
+                    { group: 'LIVE', label: 'VOID CTF', value: 'ctf.void-society.in', href: 'http://ctf.void-society.in/' },
+                    { group: 'LIVE', label: 'Root2Rise', value: 'root2rise.co.in', href: 'https://root2rise.co.in/' },
+                    { group: 'SOURCE', label: 'BIXBEE', value: 'soul-abhi/bixbee', href: 'https://github.com/soul-abhi/bixbee' },
+                    { group: 'SOURCE', label: 'ENTROPY_CHAOS', value: 'soul-abhi/entropy_chaos', href: 'https://github.com/soul-abhi/entropy_chaos' },
+                    { group: 'SOURCE', label: 'GitrixHunt', value: 'soul-abhi/gitrixhunt', href: 'https://github.com/soul-abhi/gitrixhunt' },
+                    { group: 'SOURCE', label: 'DE-NOX', value: 'soul-abhi/de-nox', href: 'https://github.com/soul-abhi/de-nox' },
+                    { group: 'SOURCE', label: 'TarnishTab', value: 'soul-abhi/TarnishTab', href: 'https://github.com/soul-abhi/TarnishTab' },
+                    { group: 'SOURCE', label: 'BlockCraft', value: 'soul-abhi/minecraft-showcase', href: 'https://github.com/soul-abhi/minecraft-showcase' },
+                  ],
+                },
+              ],
+            },
           ],
         },
       ],
@@ -425,24 +508,22 @@ export const WORLD: NodeSpec = {
       at: [-640, -170],
       size: [1160, 760],
       portal: 'WHO',
-      title: 'Abhishek',
-      sub: 'Full stack developer',
+      title: 'Abhishek Kumar',
+      sub: 'Building resilient systems and expressive interfaces with engineering precision',
       pages: [
         [
           'Hello, {visitor}!',
-          'First things first, let me introduce myself. I’m a man of my word, a full-stack developer by profession, and a professional overthinker by choice. I build things based on my own ideas, with AI as my coding sidekick — not my replacement. Yes, there’s a difference.',
-          'And no, this portfolio isn’t a reference I copied from somewhere. Every idea, interaction, and detail comes from my own imagination. Basically, this is what happens when a developer is given too much creative freedom and absolutely no supervision.',
+          'I’m a computer science student and full-stack developer interested in building practical tools, resilient systems, and expressive web experiences. My work spans interactive frontend engineering, backend workflows, and reliability-focused tooling.',
         ],
         [
-          'Feel free to explore the next panels to check out some of my projects. I’m also working on Chaos Engineering right now, which happens to be my favourite project to date. It’s all about breaking things intentionally so they don’t break unexpectedly. Pretty ironic for someone who spends hours fixing bugs.',
-          'Anyway, have a look around. I hope you like what you see — and if you don’t, at least appreciate the loading animation.',
+          'I’m currently exploring the intersection of developer experience, system reliability, and thoughtful interface design. Projects such as ENTROPY_CHAOS, GitrixHunt, and DE-NOX reflect my interest in solving concrete engineering problems rather than building demos for appearance alone.',
         ],
       ],
       facts: [
-        { k: 'Based', v: 'Somewhere in the cloud' },
-        { k: 'Focus', v: 'Cloud-native backend, chaos engineering' },
-        { k: 'Now', v: 'Making a centralized dependency manager for distributed systems' },
-        { k: 'Reading', v: 'The Art of Being Alone' },
+        { k: 'Based', v: 'Ghaziabad, Uttar Pradesh, India' },
+        { k: 'Focus', v: 'Full-stack development, DevOps, and system reliability' },
+        { k: 'Interests', v: 'Developer tools and chaos engineering' },
+        { k: 'Reading', v: 'Thinking, Fast and Slow' },
       ],
     },
 
@@ -450,15 +531,16 @@ export const WORLD: NodeSpec = {
       id: 'contact',
       kind: 'contact',
       at: [-560, 300],
-      size: [1040, 560],
+      size: [1040, 680],
       portal: 'REACH',
       title: 'Open channels',
       sub: 'All of these reach me. The first one reaches me fastest.',
       links: [
-        { label: 'Mail', value: 'voidsociety@kiet.edu', href: 'mailto:voidsociety@kiet.edu' },
-        { label: 'GitHub', value: 'draft/handle', href: '#' },
-        { label: 'Signal', value: 'on request', href: '#' },
-        { label: 'PGP', value: 'draft fingerprint', href: '#' },
+        { label: 'GitHub', value: 'github.com/soul-abhi', href: 'https://github.com/soul-abhi' },
+        { label: 'LinkedIn', value: 'in/soul-bot', href: 'https://www.linkedin.com/in/soul-bot/' },
+        { label: 'Mail', value: 'iamabhisheksingh28@gmail.com', href: 'mailto:iamabhisheksingh28@gmail.com' },
+        { label: 'Instagram', value: '@soul.shreyash', href: 'https://www.instagram.com/soul.shreyash/' },
+        { label: 'WhatsApp', value: '+91 70783 66938 · WhatsApp only', href: 'https://wa.me/917078366938' },
       ],
     },
 

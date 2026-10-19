@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "art:samurai": "node tools/samurai/build.ts",
+    "art:dragon": "node tools/dragon/build.ts",
     "art:wanderer": "${ASEPRITE:-aseprite} -b --script-param input=art/wanderer.aseprite --script-param sheet=src/intro/wanderer.png --script-param data=src/intro/wanderer.json --script tools/wanderer/animate.lua",
     "art:night": "${ASEPRITE:-aseprite} -b --script-param output=art/night.aseprite --script-param png=src/intro/night.png --script-param data=src/intro/night.json --script tools/night/paint.lua"
   },

@@ -1,5 +1,6 @@
-import type { NodeSpec } from './types';
+import type { Link, NodeSpec } from './types';
 import { visitorName } from '../intro/visitor';
+import wraithUrl from './wraith.png';
 
 const KEYWORDS: Record<string, string[]> = {
   ts: ['export', 'async', 'function', 'const', 'let', 'await', 'return', 'try', 'finally', 'new', 'if', 'for', 'of', 'in', 'class', 'interface', 'type', 'void', 'null'],
@@ -39,6 +40,19 @@ function highlight(code: string, lang: string): string {
   return out + esc(code.slice(last));
 }
 
+/**
+ * The lantern-bearer hovering off the WHO plate's top-right corner. A sibling
+ * of the plate, not a child, so the plate's crack mask doesn't clip it where
+ * it breaks out of the frame. The glows and embers sit over the flame in its
+ * raised hand and the green lantern it carries.
+ */
+const WRAITH = `<div class="wraith" aria-hidden="true">
+  <img class="wraith__body" src="${wraithUrl}" alt="" width="35" height="57" draggable="false" />
+  <i class="wraith__glow wraith__glow--flame"></i>
+  <i class="wraith__glow wraith__glow--gem"></i>
+  <i class="wraith__ember"></i><i class="wraith__ember"></i><i class="wraith__ember"></i>
+</div>`;
+
 const ticks = `<i class="tick tick--tl"></i><i class="tick tick--tr"></i><i class="tick tick--bl"></i><i class="tick tick--br"></i>`;
 
 function chips(list: string[] | undefined): string {
@@ -70,7 +84,7 @@ export function renderNode(spec: NodeSpec): string {
         <article class="plate plate--project">${ticks}
           <header class="plate__head">
             <span class="idx">${esc(spec.index ?? '')}</span>
-            <span class="plate__kind">SYSTEM</span>
+            <span class="plate__kind">${esc(spec.label ?? 'SYSTEM')}</span>
             <span class="stamp">${esc(spec.status ?? '')}</span>
           </header>
           <h2 class="plate__title">${esc(spec.title ?? '')}</h2>
@@ -92,7 +106,7 @@ export function renderNode(spec: NodeSpec): string {
       return `
         <article class="plate plate--study">${ticks}
           <header class="plate__head">
-            <span class="plate__kind">${esc(spec.sub ?? 'CASE FILE')}</span>
+            <span class="plate__kind">${esc(spec.label ?? spec.sub ?? 'CASE FILE')}</span>
             <span class="stamp stamp--ghost">${esc(spec.title ?? '')}</span>
           </header>
           <div class="study">
@@ -159,6 +173,27 @@ export function renderNode(spec: NodeSpec): string {
           </div>
         </article>`;
 
+    case 'gallery':
+      return `
+        <article class="plate plate--gallery">${ticks}
+          <header class="plate__head">
+            <span class="plate__kind">${esc(spec.label ?? 'SHOWCASE')}</span>
+            <span class="stamp stamp--ghost">${esc(spec.title ?? '')}</span>
+          </header>
+          <div class="shots">
+            ${(spec.shots ?? [])
+              .map(
+                (s) => `
+              <figure class="shot${s.wide ? ' shot--wide' : ''}">
+                <img src="${esc(s.src)}" alt="${esc(s.alt).replace(/"/g, '&quot;')}" loading="lazy" decoding="async" draggable="false" />
+                <img class="shot__color" src="${esc(s.src)}" alt="" aria-hidden="true" loading="lazy" decoding="async" draggable="false" />
+                <figcaption>${esc(s.caption)}</figcaption>
+              </figure>`,
+              )
+              .join('')}
+          </div>
+        </article>`;
+
     case 'about': {
       const pages = spec.pages ?? [spec.paras ?? []];
       const para = (p: string) =>
@@ -196,25 +231,38 @@ export function renderNode(spec: NodeSpec): string {
                   .join('')}</ul>`
               : ''
           }
-        </article>`;
+        </article>
+        ${WRAITH}`;
     }
 
-    case 'contact':
+    case 'contact': {
+      const links = spec.links ?? [];
+      const item = (l: Link) =>
+        `<li><a href="${esc(l.href)}"${
+          /^https?:/.test(l.href) ? ' target="_blank" rel="noreferrer"' : ''
+        }><span class="chan__k">${esc(l.label)}</span><span class="chan__v">${esc(
+          l.value,
+        )}</span><span class="chan__arrow">&rarr;</span></a></li>`;
+      const groups = new Map<string, Link[]>();
+      for (const l of links) if (l.group) groups.set(l.group, [...(groups.get(l.group) ?? []), l]);
+      const list = groups.size
+        ? `<div class="chan-cols">${[...groups]
+            .map(
+              ([g, ls]) =>
+                `<section><h4 class="chan-cols__h">${esc(g)}</h4><ul class="chan chan--compact">${ls
+                  .map(item)
+                  .join('')}</ul></section>`,
+            )
+            .join('')}</div>`
+        : `<ul class="chan">${links.map(item).join('')}</ul>`;
       return `
         <article class="plate plate--contact">${ticks}
-          <header class="plate__head"><span class="plate__kind">CHANNELS</span></header>
+          <header class="plate__head"><span class="plate__kind">${esc(spec.label ?? 'CHANNELS')}</span></header>
           <h2 class="plate__title plate__title--sm">${esc(spec.title ?? '')}</h2>
           <p class="plate__sub">${esc(spec.sub ?? '')}</p>
-          <ul class="chan">
-            ${(spec.links ?? [])
-              .map(
-                (l) => `<li><a href="${esc(l.href)}"><span class="chan__k">${esc(l.label)}</span><span class="chan__v">${esc(
-                  l.value,
-                )}</span><span class="chan__arrow">&rarr;</span></a></li>`,
-              )
-              .join('')}
-          </ul>
+          ${list}
         </article>`;
+    }
 
     case 'marginalia':
       return `<div class="margin-note">${esc(spec.text ?? '')}</div>`;

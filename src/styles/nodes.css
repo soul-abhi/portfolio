@@ -342,6 +342,74 @@
 }
 
 /* ===========================================================================
+   SHOWCASE - a gallery plate of screenshots
+   =========================================================================== */
+
+/* Four columns by three rows; a wide shot spans two columns. Two wide shots
+   plus seven narrow ones leave the bottom-right cell empty on purpose: that is
+   where the next stratum's marker sits (see the `at` on its child in
+   content.ts). */
+.shots {
+  --chroma-r: 26cqw;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 1.2cqw;
+  margin-top: 2.4cqw;
+  min-height: 0;
+}
+.shot {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  background: var(--void);
+}
+.shot--wide {
+  grid-column: span 2;
+}
+.shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: grayscale(1) brightness(0.88);
+}
+/* The colour copy, shown only inside the pointer spotlight. --chroma-x/y and
+   --chroma-power are written by src/fx/chroma.ts; --chroma-ox/oy shift the
+   grid-space spotlight into this shot's own box. */
+.shot .shot__color {
+  position: absolute;
+  inset: 0;
+  filter: none;
+  opacity: var(--chroma-power, 0);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    circle var(--chroma-r) at calc(var(--chroma-x, -9999px) - var(--chroma-ox, 0px))
+      calc(var(--chroma-y, -9999px) - var(--chroma-oy, 0px)),
+    var(--chroma-stops)
+  );
+  mask-image: radial-gradient(
+    circle var(--chroma-r) at calc(var(--chroma-x, -9999px) - var(--chroma-ox, 0px))
+      calc(var(--chroma-y, -9999px) - var(--chroma-oy, 0px)),
+    var(--chroma-stops)
+  );
+}
+.shot figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 1.6cqw 0.9cqw 0.6cqw;
+  font-family: var(--mono);
+  font-size: 0.85cqw;
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--paper);
+  background: linear-gradient(180deg, transparent, rgba(8, 8, 8, 0.86));
+}
+
+/* ===========================================================================
    STRATUM 3 - mechanism
    =========================================================================== */
 
@@ -495,6 +563,143 @@
    SUBJECT / CHANNELS
    =========================================================================== */
 
+/* Decay along every plate's border (src/world/decay.ts, applied in build.ts):
+   veins painted under the content, missing pixels cut out by a mask. */
+.plate {
+  isolation: isolate;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.decay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* The lantern-bearer off the WHO plate's top-right corner (render.ts).
+   Positions are shares of the sprite: flame at (2, 18), lantern at (22, 40)
+   on its 35 x 57 grid. */
+.wraith {
+  position: absolute;
+  top: -15cqw;
+  right: 2.5cqw;
+  width: 12cqw;
+  aspect-ratio: 35 / 57;
+  z-index: 2;
+  pointer-events: none;
+  animation: wraith-float 5.6s ease-in-out infinite;
+}
+.wraith__body {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 1.4cqw rgba(140, 14, 36, 0.35));
+}
+.wraith__glow {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+  mix-blend-mode: screen;
+}
+.wraith__glow--flame {
+  left: 6%;
+  top: 32%;
+  width: 9cqw;
+  background: radial-gradient(circle, rgba(255, 158, 52, 0.5), rgba(255, 92, 24, 0.16) 42%, transparent 70%);
+  animation: wraith-flicker 1.4s steps(5) infinite;
+}
+.wraith__glow--gem {
+  left: 64%;
+  top: 70%;
+  width: 7.5cqw;
+  background: radial-gradient(circle, rgba(112, 236, 96, 0.42), rgba(60, 180, 70, 0.12) 45%, transparent 70%);
+  animation: wraith-pulse 3.2s ease-in-out infinite;
+}
+/* Embers: single art pixels rising off the flame in steps, like the sprite. */
+.wraith__ember {
+  position: absolute;
+  left: 6%;
+  top: 28%;
+  width: calc(100% / 35);
+  aspect-ratio: 1;
+  background: #ffb347;
+  opacity: 0;
+  animation: wraith-ember 2.4s steps(8) infinite;
+}
+.wraith__ember:nth-of-type(4) {
+  left: 3%;
+  animation-delay: 0.8s;
+  background: #ff7a2a;
+}
+.wraith__ember:nth-of-type(5) {
+  left: 9%;
+  animation-delay: 1.6s;
+}
+@keyframes wraith-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-1.2cqw) rotate(1deg);
+  }
+}
+@keyframes wraith-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+  25% {
+    opacity: 0.7;
+    scale: 0.92;
+  }
+  55% {
+    opacity: 0.95;
+    scale: 1.06;
+  }
+  80% {
+    opacity: 0.75;
+    scale: 0.96;
+  }
+}
+@keyframes wraith-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes wraith-ember {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0.6cqw, -5cqw);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wraith,
+  .wraith__glow,
+  .wraith__ember {
+    animation: none;
+  }
+}
+
 .about {
   flex: 1;
   display: grid;
@@ -634,6 +839,35 @@
 .chan a:hover .chan__arrow {
   opacity: 1;
   transform: none;
+}
+
+/* Grouped links: one titled column per group, set tighter so a dozen rows
+   still fit the plate. */
+.chan-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4cqw;
+  margin-top: 2.4cqw;
+}
+.chan-cols__h {
+  margin: 0 0 1cqw;
+  font-size: 0.95cqw;
+  font-weight: 400;
+  letter-spacing: var(--track-wide);
+  color: var(--red-soft);
+}
+.chan--compact {
+  margin: 0;
+}
+.chan--compact a {
+  grid-template-columns: 12cqw minmax(0, 1fr) auto;
+  padding: 1cqw 0.4cqw;
+}
+.chan--compact .chan__v {
+  overflow: hidden;
+  font-size: 1.7cqw;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* ===========================================================================
@@ -1147,6 +1381,35 @@ body.is-dive .chan a {
 }
 body.is-dive .chan__k {
   grid-column: 1 / -1;
+}
+/* Three narrow columns keep nine shots inside the content band, clear of the
+   dive band at the bottom; dense flow back-fills the gaps wide shots leave. */
+body.is-dive .chan-cols {
+  grid-template-columns: 1fr;
+  gap: 4cqw;
+}
+body.is-dive .chan-cols__h {
+  font-size: 2.1cqw;
+}
+body.is-dive .chan--compact .chan__v {
+  font-size: 3.4cqw;
+}
+body.is-dive .shots {
+  flex: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: none;
+  grid-auto-rows: 15.6cqw;
+  grid-auto-flow: row dense;
+  gap: 1.6cqw;
+  margin-top: 4cqw;
+}
+body.is-dive .shot--wide {
+  grid-column: 1 / -1;
+  grid-row: span 2;
+}
+body.is-dive .shot figcaption {
+  padding: 2.4cqw 1.2cqw 0.8cqw;
+  font-size: 1.8cqw;
 }
 
 /* --- arrival ----------------------------------------------------------------
