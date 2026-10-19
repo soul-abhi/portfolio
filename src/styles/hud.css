@@ -48,6 +48,7 @@
   font-size: 13px;
   letter-spacing: var(--track-wide);
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .crumbs {
@@ -90,14 +91,17 @@
   display: block;
   font-size: 13px;
   letter-spacing: 0.06em;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
   transition: color 0.2s ease;
 }
 .crumbs button:hover span {
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .crumbs button:last-child span {
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .crumbs button:last-child em {
   color: var(--red-soft);
@@ -134,7 +138,8 @@
   writing-mode: vertical-rl;
   font-size: 9px;
   letter-spacing: var(--track-wide);
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .meter__track {
   position: relative;
@@ -161,7 +166,8 @@
   font-style: normal;
   font-size: 9px;
   letter-spacing: 0.1em;
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .meter__needle {
   position: absolute;
@@ -205,7 +211,8 @@
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .legend kbd {
   display: inline-block;
@@ -216,7 +223,8 @@
   font-family: var(--mono);
   font-size: 9px;
   text-align: center;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .hud__br {
@@ -240,13 +248,15 @@
   font-style: normal;
   font-size: 9px;
   letter-spacing: var(--track);
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .readout span {
   min-width: 78px;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* --- help ----------------------------------------------------------------- */
@@ -296,12 +306,14 @@
 .help__panel dd {
   margin: 0;
   font-size: 13px;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .help__panel p {
   margin: 28px 0 0;
   font: italic 400 20px/1.5 var(--serif);
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .help__close {
   margin-top: 26px;
@@ -312,7 +324,8 @@
   font-size: 11px;
   letter-spacing: var(--track);
   text-transform: uppercase;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
   cursor: pointer;
 }
 .help__close:hover {
@@ -372,7 +385,8 @@ body.is-dive .hud__bl::after {
   font-size: 10px;
   letter-spacing: var(--track);
   text-transform: uppercase;
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* --- route ------------------------------------------------------------------
@@ -387,7 +401,8 @@ body.is-dive .hud__bl::after {
   font-size: 9px;
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
   pointer-events: none;
   opacity: 0;
   transform: translate(-50%, 6px);
@@ -443,7 +458,8 @@ body.is-dive .hud__bl::after {
 }
 .route__label {
   min-width: 18ch;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
   transition:
     opacity 120ms ease,
     filter 120ms ease;

@@ -20,7 +20,8 @@
   font-size: 1.05cqw;
   letter-spacing: var(--track-wide);
   text-transform: uppercase;
-  color: #fff;
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .root__eyebrow .dot {
   width: 0.26cqw;
@@ -37,7 +38,8 @@
   font-size: 16.5cqw;
   line-height: 0.9;
   letter-spacing: -0.02em;
-  color: #fff;
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* The fire on the dot of the i. Sized in the title's own pixels, so it is
@@ -70,7 +72,8 @@
   font-family: var(--serif);
   font-style: italic;
   font-size: 2.5cqw;
-  color: #fff;
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .root__hint {
@@ -78,7 +81,8 @@
   font-size: 0.95cqw;
   letter-spacing: var(--track);
   text-transform: uppercase;
-  color: #fff;
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* ===========================================================================
@@ -140,7 +144,8 @@
   font-size: 1.1cqw;
   letter-spacing: var(--track);
   text-transform: uppercase;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .plate__head .idx {
   font-family: var(--serif);
@@ -163,7 +168,8 @@
 }
 .plate__head .stamp--ghost {
   border-color: var(--hair);
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
   transform: none;
 }
 
@@ -186,7 +192,8 @@
   font-style: italic;
   font-size: 3cqw;
   line-height: 1.2;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .hr {
@@ -213,7 +220,8 @@
   font-weight: 300;
   font-size: 1.7cqw;
   line-height: 1.8;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .plate__meta {
@@ -238,7 +246,8 @@
   font-size: 0.95cqw;
   letter-spacing: var(--track);
   text-transform: uppercase;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .spec > div::after {
   content: '';
@@ -252,6 +261,7 @@
   order: 3;
   font-size: 1.25cqw;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .spec--stack > div {
   padding-top: 0.9cqw;
@@ -288,7 +298,8 @@
   font-size: 0.95cqw;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* ===========================================================================
@@ -330,7 +341,8 @@
   font-weight: 300;
   font-size: 1.42cqw;
   line-height: 1.85;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .study__side h4 {
@@ -406,6 +418,7 @@
   letter-spacing: var(--track);
   text-transform: uppercase;
   color: var(--paper);
+  text-shadow: var(--glow);
   background: linear-gradient(180deg, transparent, rgba(8, 8, 8, 0.86));
 }
 
@@ -455,13 +468,15 @@
   font-size: 1.7cqw;
   letter-spacing: 0.16em;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .stage__detail {
   margin: 0;
   font-weight: 300;
   font-size: 1.25cqw;
   line-height: 1.75;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .notes {
@@ -475,7 +490,8 @@
   margin: 0;
   font-size: 1.15cqw;
   font-style: italic;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .notes sup {
   margin-right: 0.7cqw;
@@ -499,7 +515,8 @@
   border-bottom: 1px solid var(--hair);
   font-size: 1.1cqw;
   letter-spacing: 0.1em;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .src__dot {
   width: 0.7cqw;
@@ -526,7 +543,8 @@
   font-size: 1.42cqw;
   line-height: 1.72;
   white-space: pre;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .src__code .ln {
   display: block;
@@ -539,23 +557,28 @@
   left: 0;
   width: 3cqw;
   text-align: right;
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .t-c {
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
   font-style: italic;
 }
 .t-s {
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .t-k {
   color: var(--red-soft);
 }
 .t-n {
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .t-f {
   color: var(--paper);
+  text-shadow: var(--glow);
   font-weight: 500;
 }
 
@@ -735,7 +758,8 @@
 .about__pager {
   margin-left: auto;
   font-variant-numeric: tabular-nums;
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .about__pager-n {
   color: var(--red-soft);
@@ -755,7 +779,8 @@
   font-weight: 300;
   font-size: 1.6cqw;
   line-height: 1.85;
-  color: #fff;
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* The way out of the panel, along the bottom edge. */
@@ -789,11 +814,13 @@
 .about__link-v {
   font-size: 1.25cqw;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .about__link-arrow {
   margin-left: auto;
   font-size: 1.1cqw;
-  color: var(--paper-ghost);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .about__links a:hover .about__link-arrow {
   color: var(--red-soft);
@@ -826,12 +853,14 @@
   font-size: 0.95cqw;
   letter-spacing: var(--track);
   text-transform: uppercase;
-  color: var(--paper-faint);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 .chan__v {
   font-family: var(--serif);
   font-size: 3cqw;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .chan__arrow {
   font-size: 1.8cqw;
@@ -907,7 +936,8 @@
   background: none;
   border: 0;
   font-family: var(--mono);
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
   cursor: pointer;
 }
 .portal__mark {
@@ -956,6 +986,7 @@
 .portal--project .portal__cap {
   font-size: 1.25cqw;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 /* Below the surface the marker becomes a survey frame around the footprint the
@@ -1042,6 +1073,7 @@
   left: 0;
   transform: none;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 .portal__go {
@@ -1102,6 +1134,7 @@
   background: var(--red);
   border-color: var(--red);
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .node:not(.node--root) .portal:active .portal__mark {
   transform: scale(0.98);
@@ -1156,11 +1189,13 @@
 .node--root .portal__cap {
   font-size: 1.5cqw;
   color: var(--paper);
+  text-shadow: var(--glow);
 }
 .node--root .portal--about .portal__cap,
 .node--root .portal--contact .portal__cap {
   font-size: 1.15cqw;
-  color: var(--paper-dim);
+  color: var(--paper);
+  text-shadow: var(--glow);
 }
 
 @keyframes breathe {

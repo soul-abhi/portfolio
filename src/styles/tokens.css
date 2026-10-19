@@ -21,11 +21,14 @@
   --void-2: #101010;
   --void-3: #181818;
 
-  --paper: #f2f0ea;
-  --paper-dim: rgba(242, 240, 234, 0.66);
-  --paper-faint: rgba(242, 240, 234, 0.38);
+  /* All text is pure white; hierarchy comes from size and weight, and a soft
+     glow lifts it off the busy night scene behind the plates. */
+  --paper: #fff;
+  --paper-dim: #fff;
+  --paper-faint: #fff;
   --paper-ghost: rgba(242, 240, 234, 0.18);
   --hair: rgba(242, 240, 234, 0.13);
+  --glow: 0 0 0.45em rgba(255, 255, 255, 0.4), 0 0 1px rgba(255, 255, 255, 0.6);
 
   /* Graphic signal: markers, cut lines, rules, stamps. */
   --red: #d71935;
