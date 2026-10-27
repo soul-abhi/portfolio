@@ -1,338 +1,399 @@
+<div align="center">
+
+<img src="public/pfp.jpg" alt="An ink drawing of a grinning character in a red hat" width="112" height="112" />
+
 # ZOOM
 
-A portfolio with no pages.
+**A portfolio with no pages.**
+One infinite plane where zoom level *is* information depth, and a second, quieter
+reading of the same work for anyone who would rather scroll.
 
-The whole site is one infinite plane, and zoom level *is* information depth.
-Far out you see a constellation of six systems; zoom into one and it unfolds
-into a plate, then a case file, then the mechanism, then the source. Five
-strata, one continuous surface, no page loads and no scroll sections.
+<p>
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/React-19-149ECA?style=flat-square&logo=react&logoColor=white" />
+  <img alt="GSAP" src="https://img.shields.io/badge/GSAP-3.15-0AE448?style=flat-square&logo=greensock&logoColor=black" />
+  <img alt="WebGL" src="https://img.shields.io/badge/WebGL-star%20field-990000?style=flat-square&logo=webgl&logoColor=white" />
+  <img alt="Aseprite" src="https://img.shields.io/badge/Aseprite-pixel%20art-7D929E?style=flat-square&logo=aseprite&logoColor=white" />
+  <img alt="Vercel" src="https://img.shields.io/badge/deploy-Vercel-000000?style=flat-square&logo=vercel&logoColor=white" />
+</p>
 
-```
-npm install
-npm run dev        # http://localhost:5173
-npm run build      # -> dist/
-npm run typecheck
-```
+[Two experiences](#two-experiences) ·
+[The gate](#the-gate) ·
+[Design view](#design-view-the-zoomable-surface) ·
+[Content view](#content-view-the-reading-copy) ·
+[Animation](#animation-catalogue) ·
+[Architecture](#architecture) ·
+[Getting started](#getting-started)
 
-Content lives entirely in `src/world/content.ts`. See **CONTENT.md** for the
-replacement checklist — all copy currently in the repo is draft.
+<br />
+
+<img src="docs/screens/surface.webp" alt="The Design view: the name at the centre of a night surface, six systems placed around it as red markers, a moonlit ridge along the bottom" width="100%" />
+
+</div>
+
+---
+
+## At a glance
+
+| | |
+|---|---|
+| **What it is** | A personal portfolio for six pieces of work (five systems and a gallery of websites), told twice from one source of truth. |
+| **Design view** | A night-sky surface you fly through. Each project descends five strata: name, plate, case file, mechanism, source. |
+| **Content view** | A light, editorial one-page site with scroll-driven motion, built in React. |
+| **Front door** | A pixel-art lantern-bearer on a lake who asks your name, remembers it, and asks how you want to see the work. |
+| **Stack** | TypeScript (strict), Vite, hand-written WebGL and canvas for the Design view; React 19 and GSAP for the Content view. |
+| **Art** | Every sprite is an Aseprite file in `art/`, rigged and baked by scripts in `tools/`. |
+| **Size** | The Design view ships about 49 kB gzipped (JS and CSS). The Content view is a separate chunk that only its readers download. |
 
 ---
 
 ## Two experiences
 
-After the name, the lantern-bearer's cloud offers two ways in:
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screens/plate.webp" alt="Design view: the ENTROPY_CHAOS plate, a dark panel with the project name in a script face, a one-line summary and its stack" /></td>
+    <td width="50%"><img src="docs/screens/content.webp" alt="Content view: a light page with the name in a script face, an italic positioning line, two buttons and the ink avatar in a framed panel" /></td>
+  </tr>
+  <tr>
+    <td><b>Design</b>: the zoomable night surface. Fly, pinch and dive through the work.</td>
+    <td><b>Content</b>: the same portfolio as an inked page in daylight, read top to bottom.</td>
+  </tr>
+</table>
 
-- **Design** — this surface, unchanged.
-- **Content** — the same portfolio as a light, scrolling page (`src/content/`):
-  React, GSAP ScrollTrigger and ScrollSmoother, and components from
-  [React Bits](https://reactbits.dev) vendored unmodified in `src/content/bits/`.
-  It reads `src/world/content.ts` through `src/content/data.ts`, so the two
-  can never disagree.
+Both views read the same tree, `src/world/content.ts`. The Content view reshapes it through
+`src/content/data.ts`, so the two can never disagree, and changing the copy never means touching layout.
 
-The choice is kept for the session (`src/experience.ts`); `?view=design` or
-`?view=content` links to either directly. Phones always get Content. Each
-experience is a separate dynamic import, so neither one's code reaches a
-visitor reading the other. Under reduced motion or on a repeat visit the same
-choice appears on a still card instead of the ceremony.
-
-## The front door
-
-The site opens on solid black. A summoning wind spins up — long arcs of air
-spiralling around the spot — and the samurai materialises inside it, katana in
-its scabbard. He draws, cuts twice, and the screen itself falls apart along the
-cuts onto the world behind. It is not a preloader sitting in front of the site:
-the world is live underneath from the first frame, and the break is what
-releases the camera.
-
-```
-0.00s  solid black
-0.14s  the wind jutsu begins: long arcs spiral around the spot he will take
-0.65s  the burst: ring, gust and flash; his pixels begin to arrive in it
-1.08s  fully formed, the vortex still settling
-       ── he stands here until the site is actually ready (min 1.46s) ──
-+0.00  the right hand settles on the tsuka; the thumb breaks the seal
-+0.28  the coil: weight drops onto the front leg, a red glow builds at the scabbard mouth
-+0.44  the iai dash: he launches across the screen, drawing as he goes, red afterimages behind him
-+0.47  first cut: the draw, rising left to right across the top of the screen
-+0.56  he skids past his mark, dust off the front foot
-+0.76  he turns on the vertical blade and winds up over the shoulder
-+0.85  second cut: kesa-giri, falling right to left to the bottom-left corner
-+1.00  chiburi: the blade is snapped clean
-+1.20  noto: slid home slowly, the last of it with a snap
-+1.43  on the click the cuts become physical: three pieces part along them
-+1.71  the pieces fall, tumbling in 3D, heavier ones slower, fading as they go
-+1.86  the samurai fades from his finishing pose
-+2.97  the last piece clears; the constellation has already landed
-```
-
-**The summon is the opening.** Seven long wind strokes spiral around the centre
-on the smooth overlay, with dust and chakra motes riding them, then a ring, a
-radial gust and a flash land at the moment the samurai's pixels arrive. The
-idle clock starts on the first painted frame, not at module load, so time spent
-building the atlas or loading fonts cannot eat the ceremony.
-
-**The swing is staged like a cut, not a swing.** The coil is held; the strike
-lasts about four frames and accelerates (a cubic ease-in) instead of easing out
-of the wind-up; the lean, crouch and feet all commit to it. After contact the
-blade decelerates through a follow-through, then whips back up for the second
-cut, which mirrors the first across the body. On each strike the blade leaves an
-anime smear: its last few atlas positions are drawn as an additive fan of
-white-and-red streaks under the figure, so the arc reads in the handful of
-frames the cut actually lasts.
-
-**Two resolutions, on purpose.** The sprite is blitted 1:1 into a
-low-resolution canvas whose cells are exactly one sprite pixel, and the
-fragments are carved from that same grid, so the character and the debris share
-one pixel scale. The cuts are light, not sprite: they are drawn on a
-full-resolution overlay with anti-aliased strokes — a white-hot core, a red
-neon edge, a faint haze — because the light off a blade is not made of square
-pixels. The lit edges of the pieces are drawn the same way, at device
-resolution, so the cut stays smooth while the piece tumbles.
-
-**The cuts are the fragment boundaries, not lines drawn over them.** Each cut
-is a quadratic arc whose control point lies between its endpoints in x, so it
-is a function of x and every cell is unambiguously above or below it. Two
-non-crossing diagonals — one left-to-right across the top, one right-to-left
-across the bottom — divide the screen into three regions with no polygon
-clipping at all. The same curves drive the live slash, the residual seam and
-the lit edges of the pieces; each piece's edge is clipped to its own side of
-the cut.
-
-Each live cut has a white-hot core, a red neon edge and a faint haze, tapers at
-its tail and at both screen edges, carries a hot point at its head, and sheds a
-sparse, deterministic scatter of pixels. It is drawn additively and
-anti-aliased; the pixel sparks are the only part of the effect that stays on
-the cell grid.
-
-**The pieces are real.** Each is its own pair of canvases — black body, lit
-edge — inside a wrapper with explicit translation, rotation on all three axes,
-and opacity. They part along the cuts first, then fall, lowest first; heavier
-pieces rotate less and fall longer. The lit edge holds through the separation,
-then dims ahead of the piece itself.
-
-**The stillness is the loading state.** He does not move until the world has
-painted and the fonts have landed (capped at 1.5s, so a slow font CDN can never
-strand anyone), and until every frame of him has been rasterised. There is no
-loading bar and no fake percentage.
-
-It plays once per session (`sessionStorage`), any key or click jumps to the
-first cut, and `prefers-reduced-motion` gets a 280ms curtain with no fracture.
-Everything is seeded, so every run cuts the same screen the same way. In every
-path the overlay is removed from the DOM, never left as an invisible sheet.
-
-**The samurai is an Aseprite sprite** (`art/samurai.aseprite`), exported as a
-packed, trimmed sheet (`src/intro/samurai.png`) plus one row of data per frame
-(`src/intro/samurai.json`): where the frame sits in its cell, how far along the
-dash it is, where the blade and the scabbard mouth are. The intro moves him
-across the screen by a viewport-sized distance; the frames themselves never
-travel, which keeps the sheet small.
-
-The frames are generated, not hand-placed. `tools/samurai/rig.ts` poses a
-skeleton — hip, chest, head, two-bone IK arms and legs, a scabbard on the left
-hip, a simulated scarf — through its `key()` calls, and `tools/samurai/build.lua`
-assembles the result in Aseprite as an indexed, layered, tagged sprite. The
-sword is locked to the scabbard's axis until the blade clears the mouth, and
-locked back onto it to be sheathed, so it never appears in his hand from
-nowhere. Facing is a mirror applied before rim lighting, so the light stays
-upper-right when he turns.
-
-```
-npm run art:samurai                   # regenerate every frame, rebuild the .aseprite, export
-npm run art:samurai -- --export-only  # export the .aseprite as it stands, after hand edits
-```
-
-Both need Aseprite on `PATH` or in `ASEPRITE`. A full run overwrites
-`art/samurai.aseprite`; after hand edits use `--export-only`, which keeps the
-pixels and reuses the blade data from the last full run, so keep the sword
-where it was. If you retime the keys, move the matching constants at the top
-of `katana.ts` (`SLASHES`, `SEPARATE_AT`) with them.
-
-He is rim-lit rather than outlined: white on edges that face up, steel grey on
-edges facing right, a thin deep-red back light on edges facing left. The figure
-stays predominantly black; red is rationed to the scarf, the lacing, the obi,
-the scabbard bands, the maedate's sun and the eye.
-
-## Controls
-
-| | |
+| Routing rule | Where |
 |---|---|
-| click a panel or marker | fly into it; click the panel you are on to go one stratum deeper |
-| scroll / swipe | along the route, one page per gesture: surface → who → 1–6 → reach |
-| pinch | descend or ascend one stratum, settling onto a fitted frame |
-| `enter` / `shift+enter` | next / previous on the tour: who → 1–6 → reach → surface |
-| `←` / `→` | previous / next on the tour |
-| `↓` / `space` | descend one stratum |
-| `↑` / `esc` | ascend one stratum |
-| `1`–`6` | jump to a system |
-| `0` | return to the surface |
-| drag | a short peek; it resists past a margin and springs back |
-| `?` | all keys |
-| any key / click | skip the intro to the first cut |
+| The gate asks which view to open, once per session. | `src/experience.ts` |
+| `?view=design` and `?view=content` link straight to either. | `src/experience.ts` |
+| Phones and coarse pointers always get Content: the surface has no phone layout. | `src/entry.ts` |
+| Each view is its own dynamic import, so neither one's code reaches the other's readers. | `src/entry.ts` |
+| The light view is marked before first paint, so there is no dark-to-light flash. | `index.html` |
 
-**The view always finishes on a fitted frame.** Every gesture and key resolves
-to a panel, and the camera settles on that panel's frame, fitted to the part of
-the screen the HUD leaves free. Only the branch being viewed is drawn —
-sibling panels ease out — so nothing overlaps the panel you are on.
+---
 
-**Scroll travels the route, it does not zoom.** From anywhere, scrolling down
-goes to the next page on the route — surface, who, the six systems in order,
-reach — and scrolling up goes back. One gesture is one page, however hard the
-flick; trackpad momentum cannot start a second one, even after the first has
-landed.
+## The gate
 
-The motion, in order of what the eye notices:
+<img src="docs/screens/gate.webp" alt="The gate: a cloaked lantern-bearer standing on a stone slab on a still lake at night, a pixel thought-cloud beside him asking 'Who goes there?'" width="100%" />
 
-- **A spring, not steps.** The wheel moves a goal and the camera chases it on
-  a critically damped spring, so a notched mouse wheel glides, and a change of
-  mind mid-flight reverses with its momentum instead of restarting.
-- **The shortest-feeling path.** Between two pages the camera follows the
-  smooth pan-and-zoom curve of van Wijk & Nuij (the one d3's `interpolateZoom`
-  uses): it pulls back just far enough to see both pages, swings across, and
-  settles into the next. Both stay drawn until it lands.
-- **Parallax at three depths.** The star field's octaves pan at different
-  fractions of the camera's speed, and inside each plate the header, subtitle
-  and title shift by different amounts as it slides across the screen.
-- **Arrival.** A page's contents are held back from the moment the camera sets
-  off for it and cascade in once it lands, 55ms apart, each rising a touch out
-  of a soft blur. Leaving is instant.
-- **A whisper of motion blur** (at most 1.4px) on the world while the camera is
-  really moving, which fuses the crossfading plates into one movement.
-- **The route bar** at the bottom: a tick per page and a line that fills with
-  the spring's live position, so it moves with the camera rather than after it.
+A lantern-bearer stands on a slab floating on a lake at night **while the site loads**. There is no
+loading bar: he is the loading state. When the world behind him is ready, he asks your name in a pixel
+thought-cloud, then asks how you would like to see the work.
 
-With `prefers-reduced-motion` there is no flight, no blur and no rise: pages
-crossfade in place.
-Clicking still goes straight to any marker or panel, and a trackpad pinch
-still zooms.
+```mermaid
+flowchart LR
+  A([Night fades up]) --> B{Name remembered?}
+  B -- no --> C[Who goes there?]
+  C --> D[Welcome, NAME]
+  B -- yes --> E[Welcome back, NAME]
+  D --> F{Design or Content}
+  E --> F
+  F --> G[He plants his staff]
+  G --> H[The gate splits down the middle]
+  H --> I([The chosen view, already live underneath])
+```
 
-On touch a vertical swipe does the same as the wheel, and the surface
-re-composes as an index column in route order.
+- **Remembers you.** The name is kept in `localStorage` until the visitor clears site data
+  (`src/intro/visitor.ts`). Returning visitors skip straight to the choice.
+- **Real DOM over pixel art.** The cloud is drawn on the intro's cell grid with a scalloped, shaded
+  edge, but the words and the field are real elements, so typing, autofill, screen readers and on-screen
+  keyboards all work (`src/intro/ask.ts`).
+- **Two resolutions on purpose.** The figure and the night are blitted 1:1 into a low-resolution
+  canvas whose cells are one sprite pixel. The light around him (glow, flash, seam, mist) is smooth, on
+  a full-resolution overlay.
+- **Plays once per session.** Any key or click skips ahead. Under `prefers-reduced-motion`, or on a
+  repeat visit in the same session, the same choice appears on a still card instead of the ceremony.
 
-## How it works
+---
 
-No runtime dependencies. Vite and TypeScript are the only packages, both dev-only.
-Build output is ~59 kB of JS and ~19 kB of CSS (~28 kB gzipped, all in), intro
-and samurai included, plus the 46 kB samurai sheet. The fracture is canvases carved from the cell grid plus the Web Animations
-API; no animation library, and no rendering engine beyond the one fullscreen
-WebGL pass the star field already needed.
+## Design view: the zoomable surface
 
-**`core/camera.ts`** — the entire site's state is `(cx, cy, z)`, where `z` is the
-*natural log* of the zoom scale. Log space is what makes the rest tractable: a
-zoom from x1 to x10,000 is a straight line in `z`, so easing, momentum and
-smoothing behave identically at every depth. `flyTo` interpolates `z` along a
-parabola that sags to an apex where both endpoints fit on screen, which gives
-the pull-back-travel-dive arc for free.
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screens/surface.webp" alt="The surface: the name at the centre, six system markers in a ring" /></td>
+    <td width="50%"><img src="docs/screens/study.webp" alt="A case file: the problem, the decision and what happened, with a specification table" /></td>
+  </tr>
+</table>
 
-**`world/build.ts`** — level of detail. Every node carries a world scale `s`; its
-on-screen size is `s x cameraScale`, and it fades in and out of a visibility
-band expressed as fractions of the viewport diagonal (not pixels, so the world
-is not mis-scaled on a 5K display). The band is ~8.5x wide at full opacity,
-wider than the 6x between strata, so at least one stratum is always fully
-legible and every transition is a crossfade. Nodes outside the band are
+The whole site is one plane. Far out you see the six systems in a ring around the name; zoom into one
+and it unfolds into deeper strata, each one `ZOOM_STEP` (6x) smaller than its parent:
+
+```
+root          I    the surface: the name, the line, the ring of systems
+└ project     II   the plate: name, one line, stack, status
+  └ study     III  the case file: problem, decision, outcome, numbers
+    └ mechanism IV how one part actually works, as staged steps
+      └ source  V  the code itself, highlighted
+```
+
+**Controls**
+
+| Input | Does |
+|---|---|
+| Click a panel or marker | Fly into it; click the panel you are on to go one stratum deeper |
+| Scroll / swipe | Along the route, one page per gesture: surface, who, 1 to 6, reach |
+| Pinch | Descend or ascend one stratum, settling onto a fitted frame |
+| `Enter` / `Shift+Enter`, `←` / `→` | Next / previous on the tour |
+| `↓` `Space` `+` | Descend one stratum |
+| `↑` `Esc` `-` | Ascend one stratum |
+| `1` to `6` | Jump to a system |
+| `0` | Return to the surface |
+| `?` | All keys |
+
+The view always finishes on a fitted frame. Every gesture resolves to a panel and the camera settles
+onto it, fitted to the part of the screen the HUD leaves free. Each depth writes itself to the URL hash,
+so any stratum is linkable and the back button works.
+
+---
+
+## Content view: the reading copy
+
+A light, editorial page in the palette of the avatar's ink drawing: paper, ink and the one red.
+It keeps the surface's display face and the same pixel fire on the I, so both views open on one
+signature.
+
+| Section | What happens there |
+|---|---|
+| **Hero** | The name is drawn up out of its baseline; the italic line rises word by word from behind masks; the fire catches once the I is drawn. The entrance waits for its own two faces (capped at 1.2 s), so it never animates in the fallback font. A dot-grid screentone answers the pointer. |
+| **About** | The lead statement sharpens word by word as it scrolls into view; the greeting uses the name given at the gate. |
+| **Work** | An index, then one case file per project: lede, stack chips, screenshot panels with parallax, problem / decision / outcome, count-up metrics, a mechanism rail that fills with the scroll, and a source excerpt printed in reverse. |
+| **Websites** | Every live site as a screenshot that sits in grey until the pointer comes near. |
+| **Stack** | Two counter-running marquees of every tool, then the same tools grouped by system layer with the projects that use each. |
+| **Contact** | Magnetic primary action, channel rows with a sweeping hover fill. |
+| **Footer** | The page ends in the surface's night, with a door back to the Design view. |
+
+---
+
+## Animation catalogue
+
+Every moving thing on the site, what it is built with, and where to find it.
+
+### Technical motion
+
+| Effect | Technique | File |
+|---|---|---|
+| Camera flight between pages | Pan-and-zoom along the van Wijk and Nuij curve (the one d3's `interpolateZoom` uses), in log-zoom space | `src/core/camera.ts` |
+| Scroll and wheel travel | A goal chased by a critically damped spring, so notched wheels glide and a change of mind keeps its momentum | `src/main.ts` |
+| Level of detail | Each node fades through a visibility band set as a fraction of the viewport diagonal; anything outside it is `display: none` | `src/world/build.ts` |
+| Infinite star field | One fullscreen WebGL pass, three octaves of stars in world space, double-precision phase computed in JS | `src/layers/field.ts` |
+| Arrival cascade | A page's contents rise out of a soft blur 55 ms apart once the camera lands | `src/world/build.ts` |
+| Motion blur | At most 1.4 px on the world while the camera is really moving | `src/main.ts` |
+| Route bar | Ticks and a fill driven by the spring's live position every frame | `src/layers/route.ts` |
+| Smooth scroll and parallax | GSAP ScrollSmoother with `data-speed` layers and `data-parallax` drift | `src/content/App.tsx` |
+| Scroll reveals | `ScrollTrigger.batch`, with already-passed elements shown at once after a long jump | `src/content/App.tsx` |
+| Hero entrance | One GSAP timeline gated on font loading, with masked word rises from GSAP SplitText | `src/content/sections/Hero.tsx` |
+| Mechanism rail | A scrubbed CSS custom property (`--fill`) that runs across on wide screens and down on narrow ones | `src/content/sections/ProjectCard.tsx` |
+| Count-up metrics | Figures parsed from the copy and tweened once on entry, settling back to the written text | `src/content/sections/ProjectCard.tsx` |
+
+### Design motion
+
+| Effect | Technique | File |
+|---|---|---|
+| The gate | Sprite frames on a cell grid, a smooth light overlay, the gate halves parting and dissolving onto the world | `src/intro/gate.ts` |
+| The night | Dithered sky, moon, ridges and a mirrored lake, composed once per layout; only stars and shimmer redraw | `src/intro/night.ts` |
+| The horizon | The intro's night carried into the surface, sinking and fading within half a stratum of descent | `src/layers/horizon.ts` |
+| The dragon | Four baked flight sets (flap, climb, glide, dive) picked to fit each pass; it banks, dives and narrows edge-on in turns | `src/layers/dragon.ts` |
+| Fire on the I | A four-frame 11x17 sprite at its native 10 fps, anchored to the glyph's ink by measurement | `src/fx/flame.ts` |
+| Plate decay | Seeded pixel-art veins and cracks along each plate's border; missing pixels cut real holes through a mask | `src/world/decay.ts` |
+| Chroma reveal | Grey screenshots with a soft, lagging circle of colour following the pointer | `src/fx/chroma.ts`, `src/content/bits/ChromaGrid.tsx` |
+| Dot-grid screentone | Canvas dots that swell and glow near the pointer and ripple from a click | `src/content/bits/DotGrid.tsx` |
+| Pill navigation | A glass nav with a gliding hover pill and an active dot | `src/content/bits/PillNav.tsx` |
+| Magnetic buttons, spotlight cards, marquees | Pointer-following transforms, a radial light under the pointer, seamless looping rows | `src/content/bits/` |
+
+All of it respects `prefers-reduced-motion`: flights become crossfades, the gate becomes a still card,
+scroll effects are not set up at all, and anything that was hidden for an entrance is simply shown.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+  HTML[index.html<br/>marks the light view before first paint] --> Entry[src/entry.ts]
+  Entry -->|desktop, no choice yet| Main[src/main.ts<br/>Design view]
+  Entry -->|phone, or chose Content| Content[src/content<br/>React + GSAP]
+  Main --> Gate[src/intro<br/>gate, night, ask, visitor]
+  Gate -->|picked Content| Content
+  Main --> Core[src/core<br/>camera, input]
+  Main --> Layers[src/layers<br/>field, horizon, dragon, route, hud]
+  Main --> World[src/world<br/>build, decay, render]
+  Data[(src/world/content.ts<br/>single source of truth)] --> World
+  Data --> Shape[src/content/data.ts] --> Content
+```
+
+<details>
+<summary><b>Project structure</b></summary>
+
+```
+.
+├── art/                 Aseprite sources: wanderer, night, dragon, samurai
+├── tools/               Rigs and build scripts that bake the sprites
+│   ├── dragon/          skeleton rig + bake (Node)
+│   ├── night/           ridges and moon painter (Aseprite Lua)
+│   ├── samurai/         IK rig + Aseprite assembly
+│   └── wanderer/        animation export (Aseprite Lua)
+├── public/              fonts, favicons, the fire sprite, site screenshots
+├── docs/screens/        the screenshots in this README
+└── src/
+    ├── entry.ts         picks a view and imports only that one
+    ├── experience.ts    the Design / Content choice and its routing
+    ├── main.ts          the Design view: wiring, route, gestures to camera
+    ├── core/            camera (cx, cy, log z), input intent
+    ├── layers/          WebGL star field, horizon, dragon, route bar, HUD
+    ├── world/           the content tree, plate builder, decay, highlighter
+    ├── intro/           the gate, its night, the name cloud, remembered name
+    ├── fx/              the fire on the I, chroma reveal
+    ├── styles/          tokens and the Design view's CSS
+    └── content/         the Content view
+        ├── sections/    Hero, About, Work, ProjectCard, Showcase, Stack, Contact, Footer
+        ├── bits/        interaction components from React Bits
+        ├── data.ts      reshapes the world tree into page records
+        └── motion.ts    GSAP registration and section navigation
+```
+
+</details>
+
+### Engineering patterns
+
+- **Single source of truth.** One typed tree drives both views; the Content view only reshapes it.
+- **State is three numbers.** The Design view's whole state is `(cx, cy, z)`, where `z` is the natural
+  log of the zoom scale. A zoom from x1 to x10,000 is a straight line in `z`, so easing and momentum
+  behave the same at every depth.
+- **Input reports intent, not positions.** Gestures say "go on", "go deeper" or "go back"; `main.ts`
+  decides the camera, so every gesture ends on a properly fitted frame.
+- **Code splitting by experience.** Each view is a dynamic import; the chosen view starts loading the
+  moment it is picked, behind the gate's greeting.
+- **Explicit animation end states.** Tweens are written as `fromTo` with known end values, so nothing
+  inherits a half-finished CSS transition.
+- **Fail visible.** Motion only ever starts from a hidden state it sets itself, so a script failure
+  leaves a readable page.
+- **Seeded randomness.** Decay, sparks and scatter are seeded, so every visit draws the same thing.
+- **Strict TypeScript.** `strict`, `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, no unused locals.
+
+<details>
+<summary><b>Deep dive: seven orders of magnitude without the stars swimming</b></summary>
+
+At x4e7 zoom the interesting world coordinates are around 1e-7, and float32 cannot hold "camera
+position" and "cell size" at that ratio without the field visibly swimming. So the camera is never sent
+to the GPU. JavaScript computes each octave's *phase*, `fract(camera / cell)`, always in `[0, 1)`, and
+its wrapped *cell index*, both in double precision. The shader only ever sees small numbers, and a star
+keeps its identity whatever zoom it is viewed from.
+
+The stars live in world space across three octaves, each a factor of 6 finer than the one above, so
+descending a stratum does not magnify the same field: it reveals a finer one that was always there.
+
+</details>
+
+<details>
+<summary><b>Deep dive: level of detail as a visibility band</b></summary>
+
+Every node carries a world scale `s`; its on-screen size is `s x cameraScale`, and it fades in and out of
+a band expressed as fractions of the viewport diagonal (not pixels, so the world is not mis-scaled on a
+5K display). The band is about 8.5x wide at full opacity, wider than the 6x between strata, so at least
+one stratum is always fully legible and every transition is a crossfade. Nodes outside the band are
 `display: none` and cost nothing.
 
-**`layers/field.ts`** — the void, one fullscreen WebGL pass: black, a sparse
-scatter of stars, and a meteor every few seconds, always falling
-top-right to bottom-left. The stars are not a
-flat backdrop — they live in world space across three octaves, each a factor
-of 6 finer than the one above, so descending a stratum does not magnify the
-same field, it reveals a finer one that was always there. That is what keeps
-the sense of real depth with no grid to subdivide.
+</details>
 
-> The one real engineering problem is precision. At x4e7 zoom the interesting
-> world coordinates are around 1e-7, and float32 cannot hold "camera position"
-> and "cell size" at that ratio without the field visibly swimming. So the
-> camera is never sent to the GPU. JS computes each octave's *phase* —
-> `fract(camera / cell)`, always in `[0,1)` — and its wrapped *cell index*,
-> both in double precision. The shader only ever sees small numbers, and a star
-> keeps its identity whatever zoom it is viewed from. That is what lets the
-> zoom run seven orders of magnitude deep and stay solid.
+<details>
+<summary><b>Deep dive: welding a sprite to a letter</b></summary>
 
-**Typography** is authored in container-query units against each plate, so one
-set of rules serves both the landscape desktop plates and the portrait mobile
-ones. `world/build.ts` rebuilds every plate at a fixed 1:2 frame on touch; the
-extra height it buys is deliberate, and becomes the band the next stratum sits
-in.
+The title is one shaped text run in a script face, so splitting it into per-letter spans would break the
+joins. Instead a `Range` finds the I's box, and an offscreen rasterisation of the same string finds the
+ink: the vertical comes from the top of that glyph, the horizontal from the ink centroid. The probe
+reproduces the title's negative tracking, and everything is divided by the camera scale, which keeps the
+flame on the letter at every zoom level.
 
-**Routing** — the focused node writes itself to the URL hash once the camera
-settles, so any depth is linkable and the back button works. Arriving on a deep
-link starts the camera outside and flies in.
+</details>
 
-## Accessibility and fallbacks
+---
 
-- Every marker is a real `<button>` with an `aria-label`; channels are real links.
-- The intro overlay is `aria-hidden` — no animation frame is ever announced —
-  and the site behind it is in the accessibility tree from the first paint.
-- Full keyboard navigation; `prefers-reduced-motion` replaces flights with cuts
-  and the fracture with a short curtain.
+## Design system
+
+**Palette.** Three colours, strictly rationed: black ground, white content, red as the only signal.
+On the surface the stars, vignette and grain never touch red, so every red mark is content. Two reds
+exist for contrast: `#d71935` for marks and rules, a lighter red for anything set at label size. The
+Content view inverts the ground to paper (`#f3f2ef`) and ink (`#121212`) with the same red.
+
+**Typography.**
+
+| Face | Job |
+|---|---|
+| **Candy Inc** | The name and headings without digits or punctuation (self-hosted, preloaded) |
+| **Instrument Serif** | Italic emphasis lines, headings in the Content view, the `01` to `06` indices |
+| **IBM Plex Mono** | Labels, code, the HUD, everything technical |
+| **Instrument Sans** | Body copy in the Content view |
+
+Candy Inc is a trial cut: its digits render as watermarked glyphs and most punctuation is missing, so it
+is only applied where neither appears. Its license is freeware, non-commercial, personal use only (see
+`public/fonts/CandyInc-LICENSE.txt`). If the site ever promotes paid work, buy the commercial license or
+point `--display` at the serif fallback; that token is the only place the face is named.
+
+**Pixel art.** Everything drawn in pixels shares one rule: one canvas cell per art pixel, scaled
+nearest-neighbour, so sprites stay hard-edged at any size. Light is the exception and is drawn smooth.
+
+---
+
+## Accessibility
+
+- Every marker is a real `<button>` with an `aria-label`; every channel is a real link.
+- Full keyboard navigation in both views, a skip link and visible focus rings in the Content view.
+- Decorative canvases are `aria-hidden`; the gate's question is a labelled dialog with a real input.
+- `prefers-reduced-motion` is honoured everywhere (see the [animation catalogue](#animation-catalogue)).
 - No WebGL: the canvas removes itself and a CSS ground tone carries the look.
 - No JavaScript: a `<noscript>` card with the short version and an email address.
 
-## Palette
+---
 
-Three colours, strictly rationed: black ground, pixel-white content, red as the
-only signal. The background is black and white *only* — the stars, the vignette
-and the grain never touch red, so every red mark on the page is content.
+## Getting started
 
-Two reds exist for one reason. `#d71935` on black is 3.85:1, which is right for
-marks, rules and stamps but short of what small text needs, so anything set at
-label size steps up to `--red-soft` (6.5:1). Code follows the same split:
-keywords red, everything else white and grey, with weight rather than hue
-separating function names from strings.
+Requires Node `>= 22.12`.
 
-Dark by intent. There is no light theme, the same way an oscilloscope does not
-have one.
+```bash
+npm install
+npm run dev          # http://localhost:5173
+npm run build        # type-check, then build to dist/
+npm run preview      # serve the build locally
+npm run typecheck
+```
 
-## Typography
+Open `/?view=content` or `/?view=design` to go straight to either view.
 
-Three faces, each with a job:
+### Editing the content
 
-- **Candy Inc** — headings and the handwritten margin note. `--display`.
-- **Instrument Serif** — italic emphasis lines (the positioning line on the
-  surface and on every plate), contact values, and the `01`–`06` indices.
-- **IBM Plex Mono** — everything technical: body copy, labels, code, the HUD.
+Everything written on the site lives in `src/world/content.ts`. You never touch layout, CSS or
+geometry to change copy. See **[CONTENT.md](CONTENT.md)** for the shape of the tree and how to place a
+new project.
 
-**Candy Inc is a trial cut, and the site is written around that.** Its letters
-are clean, but every digit renders as a watermarked star glyph and most
-punctuation is absent. So it is only ever applied to headings that contain
-neither — project names, section headings, the name, the contact title. The
-`01`–`06` indices stay in Instrument Serif because they are digits. Where a
-character is missing, the browser falls back per-glyph to Instrument Serif;
-that pairing is deliberate, not a failure.
+### Rebuilding the art
 
-The license is **freeware, non-commercial, personal use only** — see
-`public/fonts/CandyInc-LICENSE.txt`. Commercial licensing is sold separately by
-the designer. If this site ever promotes paid work, buy the commercial license
-or swap `--display` to the serif fallback; that token is the only place the
-face is named.
+The sprites are generated, not hand-placed. Each command needs Aseprite on `PATH` or in `ASEPRITE`.
 
-It is self-hosted in `public/fonts/` as WOFF (fetched) and OTF (fallback), and
-preloaded in `index.html`. Instrument Serif and IBM Plex Mono still come from
-Google Fonts.
+| Command | Builds |
+|---|---|
+| `npm run art:wanderer` | The lantern-bearer's sheet and frame data from `art/wanderer.aseprite` |
+| `npm run art:night` | The ridges and moon from the night painter |
+| `npm run art:dragon` | The dragon's four flight sets from its skeleton rig |
+| `npm run art:samurai` | The samurai from its IK rig (an earlier intro, kept in `src/intro/katana.ts` but not wired in) |
 
-## The fire on the i
+### Deployment
 
-The surface title carries a small fire on the dot of its `i`. It is a
-four-frame, 11×17 pixel sprite sheet (`public/fx/fire.png`), extracted from the
-supplied reference GIF and played at its native 10fps on an 11×17 canvas. No
-blur or filter scaling anywhere: the canvas is driven by nearest-neighbour.
+Configured for Vercel (`vercel.json`): `npm ci`, `npm run build`, output `dist/`. Hashed assets are
+cached for a year as immutable; every response sends `X-Content-Type-Options`, `Referrer-Policy` and
+`X-Frame-Options`.
 
-It is anchored by measurement, not by hard-coded percentages. The title is one
-shaped text run in a script face, so splitting it into per-letter spans would
-break the joins. Instead a Range finds the `i`'s box, and an offscreen
-rasterisation of the same string finds the ink: the vertical comes from the top
-of that glyph, the horizontal from the ink centroid, nudged onto the rounded
-terminal knot that reads as the letter's dot. The probe reproduces the title's
-negative tracking — without it, the anchor drifts right of the glyph by one
-letter-space for every character before the `i`. Everything is divided by the
-camera scale, which keeps the flame welded to the knot at every zoom level. It
-re-measures on resize and after the webfont resolves.
+---
 
-The flame is 0.22em tall, roughly the height of the loop's counter, so it sits
-inside the letter rather than over the word.
+## Credits
 
-Note that this sprite uses orange and pale yellow from the reference, which
-sits outside the site's black/white/red palette. It was used as supplied. If
-the strict palette matters more than the reference's colour, remapping the
-sprite's three inks to red/white is a one-file change.
+- Interaction components in `src/content/bits/` are adapted from [React Bits](https://reactbits.dev).
+- Motion in the Content view uses [GSAP](https://gsap.com), including ScrollTrigger, ScrollSmoother and SplitText.
+- Display face: Candy Inc (trial, personal use; see the license file). Text faces: Instrument Serif,
+  Instrument Sans and IBM Plex Mono from Google Fonts.
+
+<div align="center">
+<br />
+<sub>Built by <a href="https://github.com/soul-abhi">soul-abhi</a>.</sub>
+</div>
