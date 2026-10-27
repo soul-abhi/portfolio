@@ -9,7 +9,7 @@
  * readers and on-screen keyboards all work as they would anywhere else.
  */
 
-import { saveVisitor, UNNAMED } from './visitor';
+import { saveVisitor, storedVisitor, UNNAMED } from './visitor';
 import type { Experience } from '../experience';
 
 export interface AskOpts {
@@ -77,6 +77,8 @@ export class Ask {
   private shown = false;
   private picked = false;
   private name = UNNAMED;
+  /** The name was remembered from an earlier visit, so it is not asked for. */
+  private returning = false;
 
   constructor(opts: AskOpts) {
     this.opts = opts;
@@ -153,14 +155,32 @@ export class Ask {
     if (this.shown) return;
     this.shown = true;
     this.el.hidden = false;
+
+    // A visitor who gave their name before is not asked it again: the cloud
+    // opens straight onto the choice, or, if that is made too, the greeting.
+    const known = storedVisitor();
+    if (known) {
+      this.answered = true;
+      this.returning = true;
+      this.name = known;
+      if (this.opts.choose) this.setChoosing();
+    }
+
     this.place(anchor);
     this.el.classList.remove('is-open');
     this.stage = 0;
     [0, 110, 220, 340].forEach((ms, i) => this.later(ms, () => this.drawStage(i + 1)));
-    this.later(400, () => {
-      this.el.classList.add('is-open');
-      this.input.focus({ preventScroll: true });
-    });
+    if (known && !this.opts.choose) {
+      this.later(400, () => {
+        this.el.classList.add('is-open');
+        this.greet();
+      });
+    } else {
+      this.later(400, () => {
+        this.el.classList.add('is-open');
+        (known ? this.picks[0]! : this.input).focus({ preventScroll: true });
+      });
+    }
     // The pixel face may land after the first measure; refit the cloud when it does.
     void document.fonts?.ready.then(() => {
       if (this.shown && this.anchor) this.place(this.anchor);
@@ -251,14 +271,22 @@ export class Ask {
     this.el.classList.remove('is-open');
     [0, 70, 140].forEach((ms, i) => this.later(ms, () => this.drawStage(3 - i)));
     this.later(REFILL_MS, () => {
-      this.el.classList.add('is-choosing');
-      this.line1.textContent = `Welcome, ${this.name}.`;
-      this.line2.textContent = 'How would you like to see it?';
+      this.setChoosing();
       if (this.anchor) this.place(this.anchor);
       this.drawStage(4);
       this.el.classList.add('is-open');
       this.picks[0]!.focus({ preventScroll: true });
     });
+  }
+
+  private setChoosing(): void {
+    this.el.classList.add('is-choosing');
+    this.line1.textContent = this.welcome();
+    this.line2.textContent = 'How would you like to see it?';
+  }
+
+  private welcome(): string {
+    return `Welcome${this.returning ? ' back' : ''}, ${this.name}.`;
   }
 
   private pick(e: Experience): void {
@@ -273,7 +301,7 @@ export class Ask {
   private greet(): void {
     this.el.classList.remove('is-choosing');
     this.el.classList.add('is-greeting');
-    this.line1.textContent = `Welcome, ${this.name}.`;
+    this.line1.textContent = this.welcome();
     this.line2.textContent = 'The gate will open for you.';
     if (this.anchor) this.place(this.anchor);
     this.later(GREET_MS, () => {

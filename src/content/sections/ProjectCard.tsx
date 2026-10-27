@@ -4,6 +4,8 @@ import { gsap, reducedMotion, useGSAP } from '../motion';
 import type { Project } from '../data';
 import type { Link, Pair, Shot } from '../../world/types';
 
+const ROMAN = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii'];
+
 const host = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
 /**
@@ -116,7 +118,7 @@ export function ProjectCard({ project: p }: { project: Project }) {
               <div key={s.h} className="ct-case__beat" data-reveal>
                 <h4>
                   <span className="ct-case__n" aria-hidden="true">
-                    {['i', 'ii', 'iii', 'iv'][i]}
+                    {ROMAN[i] ?? i + 1}
                   </span>
                   {s.h}
                 </h4>

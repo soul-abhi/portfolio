@@ -1283,8 +1283,14 @@ html[data-experience='content'] ::selection {
   .ct-metrics__fig {
     font-size: 1.75rem;
   }
-  .ct-preview__inset {
+  /* Matches the base rule's selector, or the base 40% wins. */
+  .ct-preview__panel > .ct-preview__inset {
     width: 46%;
+  }
+  /* The display face draws small for its size; at phone width the name needs
+     more than the 4.25rem floor to stay the largest thing in the hero. */
+  .ct-hero__name {
+    font-size: clamp(4.25rem, 27vw, 7.5rem);
   }
 }
 

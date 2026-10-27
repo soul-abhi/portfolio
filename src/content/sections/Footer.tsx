@@ -1,6 +1,7 @@
 import { about, repos, site } from '../data';
 import { isDiveMode } from '../../core/input';
 import { switchExperience } from '../../experience';
+import { goToSection } from '../motion';
 
 export function Footer() {
   const sources = repos.filter((r) => r.group === 'SOURCE');
@@ -42,7 +43,15 @@ export function Footer() {
         <span>
           © {new Date().getFullYear()} {about.name}
         </span>
-        <a href="#top">Back to top ↑</a>
+        <a
+          href="#top"
+          onClick={(e) => {
+            e.preventDefault();
+            goToSection('top');
+          }}
+        >
+          Back to top ↑
+        </a>
       </div>
     </footer>
   );

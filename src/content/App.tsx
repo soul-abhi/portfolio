@@ -41,8 +41,24 @@ export function App({ entrance }: { entrance: 'gate' | 'load' }) {
         ScrollTrigger.batch('[data-reveal]', {
           start: 'top 90%',
           once: true,
-          onEnter: (els) =>
-            gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, overwrite: true }),
+          // A jump down the page (the nav, End, a fling) enters every skipped
+          // element in one batch. Those already scrolled past are shown at once,
+          // and the stagger is capped, so what lands in view is not left blank
+          // behind a queue of elements nobody is looking at.
+          onEnter: (els, triggers) => {
+            const passed = els.filter((_, i) => triggers[i]!.progress >= 1);
+            const entering = els.filter((_, i) => triggers[i]!.progress < 1);
+            if (passed.length) gsap.set(passed, { autoAlpha: 1, y: 0, overwrite: true });
+            if (entering.length)
+              gsap.to(entering, {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.9,
+                ease: 'power3.out',
+                stagger: Math.min(0.08, 0.6 / entering.length),
+                overwrite: true,
+              });
+          },
         });
 
         gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {

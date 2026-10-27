@@ -20,12 +20,15 @@ export function Nav() {
   // The surface has no phone layout, so phones are not offered it.
   const items = isDiveMode() ? SECTIONS : [...SECTIONS, DESIGN_VIEW];
 
-  // The section in the middle band of the screen is the one being read.
+  // The section in the middle band of the screen is the one being read. The
+  // hero is watched too, so going back to the top clears the mark.
   useEffect(() => {
-    const els = SECTIONS.map((s) => document.querySelector(s.href!)).filter((el): el is Element => !!el);
+    const els = ['#top', ...SECTIONS.map((s) => s.href!)]
+      .map((sel) => document.querySelector(sel))
+      .filter((el): el is Element => !!el);
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(`#${e.target.id}`);
+        for (const e of entries) if (e.isIntersecting) setActive(e.target.id === 'top' ? undefined : `#${e.target.id}`);
       },
       { rootMargin: '-45% 0px -50% 0px' },
     );
@@ -40,7 +43,15 @@ export function Nav() {
   };
 
   return (
-    <header className="ct-nav">
+    <header
+      className="ct-nav"
+      onClickCapture={(e) => {
+        // The logo is PillNav's own plain link; route it through the smoother like the items.
+        if (!(e.target as Element).closest('a[href="#top"]')) return;
+        e.preventDefault();
+        goToSection('top');
+      }}
+    >
       <PillNav
         logo="/pfp.jpg"
         logoAlt="Back to top"
