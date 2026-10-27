@@ -1,17 +1,15 @@
 import { isDiveMode } from './core/input';
+import { storedExperience } from './experience';
 
 /**
- * The phone layout is not finished, so phones get a plain notice instead of
- * the surface. The surface is imported dynamically, which keeps its code and
- * assets off the device entirely. Same test as the dive layout uses, decided
- * once at load just as that is.
+ * Two experiences share one entry. The zoomable surface (main) owns the gate,
+ * and the gate is where a first-time visitor chooses; a visitor who already
+ * chose Content goes straight to it, and so does every phone, since the
+ * surface has no phone layout. Both are imported dynamically, so neither
+ * one's code or assets reach a visitor who is reading the other.
  */
-if (isDiveMode()) {
-  document.body.innerHTML = `
-    <main style="min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:0 16px;text-align:center;font-family:'IBM Plex Mono',ui-monospace,monospace;letter-spacing:0.2em;color:#fff">
-      <p style="margin:0;font-size:16px">UNDER CONSTRUCTION</p>
-      <p style="margin:0;font-size:12px;opacity:0.7">OPEN IN DESKTOP</p>
-    </main>`;
+if (isDiveMode() || storedExperience() === 'content') {
+  void import('./content').then((m) => m.mountContent({ entrance: 'load' }));
 } else {
   void import('./main');
 }

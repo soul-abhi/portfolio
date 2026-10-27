@@ -1,4 +1,5 @@
 import { Ask, type AskAnchor } from './ask';
+import type { Experience } from '../experience';
 import { Night } from './night';
 import sheetUrl from './wanderer.png';
 import data from './wanderer.json';
@@ -24,6 +25,10 @@ export interface IntroOpts {
   /** Fired once, as the gate opens. Start the camera flight here. */
   onCut: () => void;
   reduced: boolean;
+  /** Ask which experience to open onto: true unless the visitor already chose. */
+  askChoice: boolean;
+  /** Resolves once the chosen experience is ready to be revealed. */
+  onChoose: (e: Experience) => Promise<void>;
 }
 
 const SEEN_KEY = 'zoom:intro-seen';
@@ -125,9 +130,13 @@ export class Intro {
   private raf = 0;
   private resolve!: () => void;
   private onCut: () => void;
+  private onChoose: (e: Experience) => Promise<void>;
+  /** The visitor's choice being made ready; he waits on it before he strikes. */
+  private chosen: Promise<void> = Promise.resolve();
 
   constructor(opts: IntroOpts) {
     this.onCut = opts.onCut;
+    this.onChoose = opts.onChoose;
     this.finished = new Promise<void>((r) => (this.resolve = r));
 
     this.root = document.createElement('div');
@@ -141,7 +150,9 @@ export class Intro {
       <canvas class="gate__fx" aria-hidden="true"></canvas>
       <div class="gate__night" aria-hidden="true"></div>`;
     this.ask = new Ask({
-      onGone: () => (this.goAt = performance.now() - this.t0),
+      choose: opts.askChoice,
+      onPick: (e) => (this.chosen = this.prepare(e)),
+      onGone: () => void this.chosen.then(() => (this.goAt = performance.now() - this.t0)),
     });
     this.root.appendChild(this.ask.el);
     document.body.appendChild(this.root);
@@ -163,9 +174,11 @@ export class Intro {
     this.fxCtx = fxCtx;
     this.mirrorCtx = mirrorCtx;
 
-    // A visitor who has already seen it gets the world, not the ceremony.
+    // A visitor who has already seen it gets the world, not the ceremony -
+    // though one who has not yet chosen an experience is still asked, plainly.
     if (opts.reduced || read(SEEN_KEY)) {
-      this.shortCircuit();
+      if (opts.askChoice) this.askStill();
+      else this.shortCircuit();
       return;
     }
     write(SEEN_KEY, '1');
@@ -590,6 +603,48 @@ export class Intro {
   // -------------------------------------------------------------------------
   // Exits
   // -------------------------------------------------------------------------
+
+  /** A failed load must not hold the gate shut: the world opens instead. */
+  private prepare(e: Experience): Promise<void> {
+    return this.onChoose(e).catch(() => undefined);
+  }
+
+  /**
+   * The choice without the ceremony, for reduced motion and repeat visits: a
+   * still, dark card with the same two doors, then the short curtain.
+   */
+  private askStill(): void {
+    const still = document.createElement('div');
+    still.className = 'gate__still';
+    still.setAttribute('role', 'dialog');
+    still.setAttribute('aria-labelledby', 'gate-still-q');
+    still.innerHTML = `
+      <p class="gate__still-q" id="gate-still-q">How would you like to see it?</p>
+      <div class="gate__still-opts">
+        <button type="button" class="ask__opt" data-exp="design"><b>Design</b><span>Explore the zoomable world</span></button>
+        <button type="button" class="ask__opt" data-exp="content"><b>Content</b><span>Read it as one page</span></button>
+      </div>`;
+    this.root.appendChild(still);
+    const opts = [...still.querySelectorAll<HTMLButtonElement>('.ask__opt')];
+    opts.forEach((b, i) => {
+      b.addEventListener('click', () => {
+        opts.forEach((o) => (o.disabled = true));
+        void this.prepare(b.dataset.exp as Experience).then(() => this.shortCircuit());
+      });
+      b.addEventListener('keydown', (e) => {
+        // The surface's key handler on window claims Enter; answer it here.
+        e.stopPropagation();
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          b.click();
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          opts[1 - i]!.focus();
+        }
+      });
+    });
+    opts[0]!.focus({ preventScroll: true });
+  }
 
   private fireCut(): void {
     if (this.cutFired) return;

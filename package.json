@@ -17,7 +17,15 @@
     "art:night": "${ASEPRITE:-aseprite} -b --script-param output=art/night.aseprite --script-param png=src/intro/night.png --script-param data=src/intro/night.json --script tools/night/paint.lua"
   },
   "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }

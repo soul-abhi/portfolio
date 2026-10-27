@@ -10,8 +10,13 @@
  */
 
 import { saveVisitor, UNNAMED } from './visitor';
+import type { Experience } from '../experience';
 
 export interface AskOpts {
+  /** After the name, also ask which experience to open onto. */
+  choose: boolean;
+  /** The visitor picked an experience; called before the greeting. */
+  onPick: (e: Experience) => void;
   /** Called when the cloud has fully gone after the greeting. */
   onGone: () => void;
 }
@@ -40,6 +45,8 @@ const L = 4;
 /** Margin of scallops round the text, in cells. */
 const PAD = 7;
 const GREET_MS = 1250;
+/** The cloud deflates to its puffs and refills around the next question. */
+const REFILL_MS = 260;
 
 interface Puff {
   x: number;
@@ -55,6 +62,7 @@ export class Ask {
   private input: HTMLInputElement;
   private line1: HTMLElement;
   private line2: HTMLElement;
+  private picks: HTMLButtonElement[];
   private opts: AskOpts;
 
   private anchor: AskAnchor | null = null;
@@ -67,6 +75,8 @@ export class Ask {
   private timers: number[] = [];
   private answered = false;
   private shown = false;
+  private picked = false;
+  private name = UNNAMED;
 
   constructor(opts: AskOpts) {
     this.opts = opts;
@@ -84,6 +94,10 @@ export class Ask {
           <input class="ask__input" name="visitor" type="text" maxlength="24" spellcheck="false" autocapitalize="words" enterkeyhint="go" />
         </label>
         <p class="ask__hint" aria-hidden="true">press enter</p>
+        <div class="ask__pick" role="group" aria-labelledby="ask-q">
+          <button type="button" class="ask__opt" data-exp="design"><b>Design</b><span>Explore the zoomable world</span></button>
+          <button type="button" class="ask__opt" data-exp="content"><b>Content</b><span>Read it as one page</span></button>
+        </div>
       </form>`;
     this.cloud = this.el.querySelector('.ask__cloud')!;
     const ctx = this.cloud.getContext('2d');
@@ -93,6 +107,26 @@ export class Ask {
     this.input = this.el.querySelector('.ask__input')!;
     this.line1 = this.el.querySelector('.ask__l1')!;
     this.line2 = this.el.querySelector('.ask__l2')!;
+    this.picks = [...this.el.querySelectorAll<HTMLButtonElement>('.ask__opt')];
+    this.picks.forEach((b, i) => {
+      b.addEventListener('click', () => this.pick(b.dataset.exp as Experience));
+      b.addEventListener('keydown', (e) => {
+        // The surface's own key handler sits on window and claims Enter, so
+        // these keys are answered here and kept from reaching it.
+        e.stopPropagation();
+        // Two doors: any arrow moves to the other one, and 1 or 2 picks directly.
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          b.click();
+        } else if (e.key.startsWith('Arrow')) {
+          e.preventDefault();
+          this.picks[1 - i]!.focus();
+        } else if (e.key === '1' || e.key === '2') {
+          e.preventDefault();
+          this.picks[Number(e.key) - 1]!.click();
+        }
+      });
+    });
 
     this.body.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -206,10 +240,40 @@ export class Ask {
     this.answered = true;
     const given = raw.replace(/\s+/g, ' ').trim().slice(0, 24);
     if (given) saveVisitor(given);
-    const name = given || UNNAMED;
+    this.name = given || UNNAMED;
     this.input.blur();
+    if (this.opts.choose) this.askChoice();
+    else this.greet();
+  }
+
+  /** The second question: the cloud sinks to its puffs, then refills round the two doors. */
+  private askChoice(): void {
+    this.el.classList.remove('is-open');
+    [0, 70, 140].forEach((ms, i) => this.later(ms, () => this.drawStage(3 - i)));
+    this.later(REFILL_MS, () => {
+      this.el.classList.add('is-choosing');
+      this.line1.textContent = `Welcome, ${this.name}.`;
+      this.line2.textContent = 'How would you like to see it?';
+      if (this.anchor) this.place(this.anchor);
+      this.drawStage(4);
+      this.el.classList.add('is-open');
+      this.picks[0]!.focus({ preventScroll: true });
+    });
+  }
+
+  private pick(e: Experience): void {
+    if (this.picked) return;
+    this.picked = true;
+    this.opts.onPick(e);
+    this.picks.forEach((b) => b.classList.toggle('is-picked', b.dataset.exp === e));
+    (document.activeElement as HTMLElement | null)?.blur();
+    this.later(220, () => this.greet());
+  }
+
+  private greet(): void {
+    this.el.classList.remove('is-choosing');
     this.el.classList.add('is-greeting');
-    this.line1.textContent = `Welcome, ${name}.`;
+    this.line1.textContent = `Welcome, ${this.name}.`;
     this.line2.textContent = 'The gate will open for you.';
     if (this.anchor) this.place(this.anchor);
     this.later(GREET_MS, () => {

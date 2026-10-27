@@ -19,6 +19,23 @@ replacement checklist — all copy currently in the repo is draft.
 
 ---
 
+## Two experiences
+
+After the name, the lantern-bearer's cloud offers two ways in:
+
+- **Design** — this surface, unchanged.
+- **Content** — the same portfolio as a light, scrolling page (`src/content/`):
+  React, GSAP ScrollTrigger and ScrollSmoother, and components from
+  [React Bits](https://reactbits.dev) vendored unmodified in `src/content/bits/`.
+  It reads `src/world/content.ts` through `src/content/data.ts`, so the two
+  can never disagree.
+
+The choice is kept for the session (`src/experience.ts`); `?view=design` or
+`?view=content` links to either directly. Phones always get Content. Each
+experience is a separate dynamic import, so neither one's code reaches a
+visitor reading the other. Under reduced motion or on a repeat visit the same
+choice appears on a still card instead of the ceremony.
+
 ## The front door
 
 The site opens on solid black. A summoning wind spins up — long arcs of air

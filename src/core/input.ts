@@ -70,6 +70,16 @@ export class Input {
     window.addEventListener('keydown', this.onKey);
   }
 
+  /** Detaches every listener, for when the surface hands the page over to the Content view. */
+  dispose(): void {
+    this.el.removeEventListener('wheel', this.onWheel);
+    this.el.removeEventListener('pointerdown', this.onDown);
+    this.el.removeEventListener('pointermove', this.onMove);
+    this.el.removeEventListener('pointerup', this.onUp);
+    this.el.removeEventListener('pointercancel', this.onUp);
+    window.removeEventListener('keydown', this.onKey);
+  }
+
   /** True if the gesture that just ended was a drag, so clicks can be ignored. */
   get wasDrag(): boolean {
     return this.moved > DRAG_SLOP;

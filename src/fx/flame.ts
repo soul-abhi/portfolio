@@ -23,7 +23,11 @@ const FRAME_MS = 100;
 const NUDGE_X = 50;
 const NUDGE_Y = -80;
 
-export function attachTitleFlame(title: HTMLElement, reduced: boolean): () => void {
+/**
+ * `nudgeEm`, when given, replaces the placement nudge with one in ems of the
+ * title's font size, for titles set at a size other than the surface's.
+ */
+export function attachTitleFlame(title: HTMLElement, reduced: boolean, nudgeEm?: [number, number]): () => void {
   const text = title.textContent ?? '';
   const at = text.search(/i/i);
   if (at < 0) return () => undefined;
@@ -132,8 +136,9 @@ export function attachTitleFlame(title: HTMLElement, reduced: boolean): () => vo
 
     canvas.style.width = `${w}px`;
     canvas.style.height = `${h}px`;
-    canvas.style.left = `${raceX + NUDGE_X - w / 2}px`;
-    canvas.style.top = `${top + NUDGE_Y}px`;
+    const [nx, ny] = nudgeEm ? [nudgeEm[0] * fs, nudgeEm[1] * fs] : [NUDGE_X, NUDGE_Y];
+    canvas.style.left = `${raceX + nx - w / 2}px`;
+    canvas.style.top = `${top + ny}px`;
     placed = true;
     return true;
   };

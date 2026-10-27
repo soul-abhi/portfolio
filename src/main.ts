@@ -9,6 +9,7 @@ import { WORLD } from './world/content';
 import { ZOOM_STEP, type WorldNode } from './world/types';
 
 import { Intro } from './intro/gate';
+import { saveExperience, storedExperience, type Experience } from './experience';
 import { attachTitleFlame } from './fx/flame';
 import { attachChroma } from './fx/chroma';
 
@@ -37,7 +38,7 @@ const world = new World(worldLayer, WORLD, dive);
 
 // A small fire on the dot of the i in the surface title.
 const rootTitle = worldLayer.querySelector<HTMLElement>('.root__title');
-if (rootTitle) attachTitleFlame(rootTitle, reduceMotion);
+const dropFlame = rootTitle ? attachTitleFlame(rootTitle, reduceMotion) : null;
 
 attachChroma(worldLayer, reduceMotion);
 
@@ -513,16 +514,27 @@ worldLayer.addEventListener('click', (e) => {
   }
 });
 
-window.addEventListener('resize', () => {
-  sizeToViewport();
-  // Frames depend on the viewport; keep whatever is on screen fitted to it.
-  if (!blocked()) settleOn(current, 'instant');
-});
+/** Aborted if the visitor chooses the Content view, taking these listeners with it. */
+const live = new AbortController();
 
-window.addEventListener('hashchange', () => {
-  const id = hashId();
-  if (id && id !== focus.id) goto(id);
-});
+window.addEventListener(
+  'resize',
+  () => {
+    sizeToViewport();
+    // Frames depend on the viewport; keep whatever is on screen fitted to it.
+    if (!blocked()) settleOn(current, 'instant');
+  },
+  { signal: live.signal },
+);
+
+window.addEventListener(
+  'hashchange',
+  () => {
+    const id = hashId();
+    if (id && id !== focus.id) goto(id);
+  },
+  { signal: live.signal },
+);
 
 let hashKey = '';
 function syncHash(path: WorldNode[]): void {
@@ -549,6 +561,7 @@ function motionBlur(dt: number): void {
 
 let prev = performance.now();
 let elapsed = 0;
+let raf = 0;
 
 function frame(now: number): void {
   const dt = Math.min(0.05, (now - prev) / 1000);
@@ -570,7 +583,7 @@ function frame(now: number): void {
   hud.update(cam, focus, path);
   if (cam.settled) syncHash(path);
 
-  requestAnimationFrame(frame);
+  raf = requestAnimationFrame(frame);
 }
 
 // The world is parked at its arrival point from the first frame and renders
@@ -585,12 +598,51 @@ function arrive(): void {
 }
 
 document.body.classList.add('is-ready', 'has-intro');
-requestAnimationFrame((t) => {
+raf = requestAnimationFrame((t) => {
   prev = t;
   frame(t);
 });
 
-const intro = new Intro({ reduced: reduceMotion, onCut: arrive });
+/**
+ * Set once the Content view is loaded and chosen: the gate then opens onto
+ * that page rather than the world. Saved only once the page has loaded, so a
+ * failed fetch falls back to the world instead of stranding the visitor.
+ */
+let openContent: (() => void) | null = null;
+
+async function choose(e: Experience): Promise<void> {
+  if (e === 'design') return saveExperience(e);
+  const { mountContent } = await import('./content');
+  saveExperience(e);
+  openContent = () => {
+    retire();
+    mountContent({ entrance: 'gate' });
+  };
+}
+
+/**
+ * The world steps aside for the Content view: its loop, its listeners (its
+ * keyboard handler would otherwise swallow the page's scroll keys) and its
+ * layers all go, and the hash it was keeping goes with them.
+ */
+function retire(): void {
+  cancelAnimationFrame(raf);
+  window.clearTimeout(idle);
+  window.clearTimeout(railIdle);
+  window.clearTimeout(turnIdle);
+  live.abort();
+  input.dispose();
+  dropFlame?.();
+  for (const el of [fieldCanvas, horizonCanvas, stage, hudLayer]) el.remove();
+  history.replaceState(null, '', location.pathname);
+}
+
+const intro = new Intro({
+  reduced: reduceMotion,
+  askChoice: storedExperience() === null,
+  onChoose: choose,
+  onCut: () => (openContent ? openContent() : arrive()),
+});
 
 // Readiness is real signals, never a timer pretending to be progress. There
 // is no loading bar: the samurai's stillness is the loading state, and he

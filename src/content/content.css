@@ -1,0 +1,1298 @@
+/*
+ * The Content view: the same portfolio as an inked page in daylight.
+ *
+ * The surface is night - black ground, white type, one red signal. This is
+ * its reading copy: the paper and ink of the avatar's drawing, with the same
+ * single red. The name keeps the surface's display face and its pixel fire;
+ * everything meant to be read is set in Instrument Sans at reading sizes, and
+ * Instrument Serif (the surface's serif) carries the headings.
+ *
+ * Every rule here is either scoped under html[data-experience='content'] or
+ * namespaced ct-, so nothing in it can reach the surface. The first block
+ * undoes the surface's globals for the case where the gate handed over to
+ * this page and base.css is already loaded.
+ */
+
+@font-face {
+  font-family: 'Candy Inc';
+  src:
+    url('/fonts/CandyInc.woff') format('woff'),
+    url('/fonts/CandyInc.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html[data-experience='content'] {
+  --ct-paper: #f3f2ef;
+  --ct-sheet: #fbfbf9;
+  --ct-ink: #121212;
+  /* Body copy: 9.4:1 on paper. */
+  --ct-ink-2: #45454a;
+  /* Captions and labels only: 4.9:1 on paper. */
+  --ct-ink-3: #67676d;
+  --ct-rule: rgba(18, 18, 18, 0.12);
+  --ct-rule-2: rgba(18, 18, 18, 0.24);
+  /* The surface's red: marks, rails, numerals. */
+  --ct-red: #d71935;
+  /* The same red darkened for small text: 5.8:1 on paper. */
+  --ct-red-ink: #b3132c;
+  --ct-night-text: #f3f2ef;
+  --ct-night-dim: #a9a7a1;
+
+  --ct-display: 'Candy Inc', 'Instrument Serif', Georgia, serif;
+  --ct-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --ct-sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ct-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ct-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --ct-gutter: clamp(16px, 4vw, 48px);
+  --ct-max: 1240px;
+  --ct-nav-clear: 88px;
+
+  /* Screentone: the dot pattern the panels cast instead of a soft shadow. */
+  --ct-tone-ink: radial-gradient(circle, rgba(18, 18, 18, 0.42) 1.1px, transparent 1.35px) 0 0 / 6px 6px;
+  --ct-tone-red: radial-gradient(circle, var(--ct-red) 1.4px, transparent 1.65px) 0 0 / 7px 7px;
+}
+
+html[data-experience='content'],
+html[data-experience='content'] body {
+  height: auto;
+  overflow: visible;
+  background: var(--ct-paper);
+  color: var(--ct-ink);
+  font-family: var(--ct-sans);
+}
+html[data-experience='content'] body {
+  min-height: 100%;
+  opacity: 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html[data-experience='content'] body::before {
+  content: none;
+}
+html[data-experience='content'] ::selection {
+  background: var(--ct-red);
+  color: #fff;
+}
+
+.ct,
+.ct *,
+.ct *::before,
+.ct *::after {
+  box-sizing: border-box;
+}
+
+.ct {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+/* :where keeps this at element weight, so component classes like .ct-btn--ink win. */
+:where(.ct) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ct img {
+  max-width: 100%;
+}
+
+.ct a:focus-visible,
+.ct button:focus-visible,
+.ct pre:focus-visible {
+  outline: 2px solid var(--ct-red);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.ct [tabindex='-1']:focus {
+  outline: none;
+}
+
+.ct-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ct-skip {
+  position: fixed;
+  left: 16px;
+  top: -64px;
+  z-index: 60;
+  padding: 12px 18px;
+  font: 500 0.95rem/1 var(--ct-sans);
+  color: var(--ct-paper);
+  background: var(--ct-ink);
+  border-radius: 999px;
+  transition: top 0.2s var(--ct-ease);
+}
+.ct-skip:focus {
+  top: 16px;
+}
+
+.ct-wrap {
+  width: min(100% - 2 * var(--ct-gutter), var(--ct-max));
+  margin-inline: auto;
+}
+
+/* --- type ---------------------------------------------------------------- */
+
+.ct-label {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin: 0;
+  font: 500 0.75rem/1.2 var(--ct-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ct-ink-3);
+}
+.ct-label::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 2px;
+  background: var(--ct-red);
+}
+
+.ct-h2 {
+  display: block !important;
+  max-width: 19ch;
+  margin: 0.55rem 0 1.4rem;
+  font: 400 clamp(2.4rem, 5.2vw, 4.4rem) / 1.04 var(--ct-serif);
+  letter-spacing: -0.012em;
+  color: var(--ct-ink);
+}
+
+.ct-head {
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+.ct-head__lede {
+  max-width: 60ch;
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.65;
+  color: var(--ct-ink-2);
+}
+
+.ct-prose {
+  max-width: 64ch;
+  margin: 0 0 1.25em;
+  font-size: 1.125rem;
+  line-height: 1.72;
+  color: var(--ct-ink-2);
+}
+.ct-prose--lead {
+  margin: 0;
+  font-size: 1.1875rem;
+  color: var(--ct-ink);
+}
+
+/* Adjacent sections share their padding, so this is half the gap between two. */
+.ct-section {
+  padding-block: clamp(64px, 8vw, 116px);
+  scroll-margin-top: var(--ct-nav-clear);
+}
+
+/* --- buttons and links ----------------------------------------------------- */
+
+.ct-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  min-height: 48px;
+  padding: 0 1.4em;
+  font: 500 0.95rem/1 var(--ct-sans);
+  color: var(--ct-ink);
+  background: transparent;
+  border: 1.5px solid var(--ct-ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background-color 0.25s var(--ct-ease),
+    border-color 0.25s var(--ct-ease),
+    color 0.25s var(--ct-ease),
+    transform 0.2s var(--ct-ease);
+}
+.ct-btn:hover {
+  color: var(--ct-paper);
+  background: var(--ct-ink);
+}
+.ct-btn:active {
+  transform: scale(0.97);
+}
+.ct-btn--ink {
+  color: var(--ct-paper);
+  background: var(--ct-ink);
+}
+.ct-btn--ink:hover {
+  background: var(--ct-red);
+  border-color: var(--ct-red);
+}
+.ct-btn--lg {
+  min-height: 58px;
+  padding: 0 1.8em;
+  font-size: 1.05rem;
+}
+.ct-magnet {
+  display: inline-block;
+}
+/* Without this the button sits on a text line, and the line's descender
+   space pushes it above its neighbours in a row. */
+.ct-magnet > div {
+  display: flex;
+}
+
+.ct-out {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--ct-ink);
+  transition: border-color 0.25s var(--ct-ease);
+}
+.ct-out__k {
+  font: 500 0.7rem/1 var(--ct-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink-3);
+}
+.ct-out__v {
+  font-size: 0.98rem;
+}
+.ct-out__a {
+  color: var(--ct-red);
+  transition: transform 0.25s var(--ct-ease);
+}
+.ct-out:hover {
+  border-color: var(--ct-red);
+}
+.ct-out:hover .ct-out__a {
+  transform: translate(3px, -3px);
+}
+
+/* --- nav ----------------------------------------------------------------- */
+
+.ct-nav {
+  position: fixed;
+  top: 14px;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--ct-gutter);
+  pointer-events: none;
+}
+.ct-nav > * {
+  pointer-events: auto;
+}
+/* PillNav's off-screen measuring row must not widen the page. */
+.ct-nav .pill-nav__measure {
+  max-width: 100%;
+  overflow: hidden;
+}
+.ct-nav .pill-nav {
+  font-family: var(--ct-sans);
+  font-weight: 500;
+}
+.ct-nav .pill-nav__mark img {
+  border-radius: 50%;
+}
+
+/* --- hero ------------------------------------------------------------------ */
+
+.ct-hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  min-height: 100svh;
+  padding: 128px 0 112px;
+  overflow: clip;
+}
+
+.ct-hero__tone {
+  position: absolute;
+  inset: -12% 0 0;
+  z-index: -1;
+  -webkit-mask-image: radial-gradient(ellipse 78% 72% at 68% 46%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 78% 72% at 68% 46%, #000 25%, transparent 78%);
+}
+
+.ct-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+}
+
+.ct-hero__name {
+  position: relative;
+  margin: 0.12em 0 0.1em;
+  font: 400 clamp(4.25rem, 13vw, 11.5rem) / 0.95 var(--ct-display);
+  letter-spacing: -0.02em;
+  color: var(--ct-ink);
+}
+/* The surface's pixel fire, carried over onto the I. */
+.ct-hero__name .title-flame {
+  position: absolute;
+  translate: 0 -10px;
+  pointer-events: none;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.ct-hero__line {
+  width: 100%;
+  max-width: 23ch;
+  margin: 0 0 1.1rem;
+  font: italic 400 clamp(1.6rem, 3.1vw, 2.55rem) / 1.16 var(--ct-serif);
+  color: var(--ct-ink);
+}
+
+.ct-hero__sub {
+  margin: 0;
+  font: 500 0.8rem/1.6 var(--ct-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink-2);
+}
+
+.ct-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2.25rem;
+}
+
+.ct-hero__panel {
+  position: relative;
+  justify-self: end;
+  width: min(100%, 340px);
+  /* Room for the screentone it casts, so that, not the frame, meets the page edge. */
+  margin: 0 16px 0 0;
+  rotate: 2.5deg;
+}
+/* The panel casts screentone, not a shadow: drawn first, so the drawing sits on it. */
+.ct-hero__panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translate(16px, 16px);
+  background: var(--ct-tone-red);
+}
+.ct-hero__panel img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  background: #efede8;
+  border: 3px solid var(--ct-ink);
+}
+
+.ct-hero__cue {
+  position: absolute;
+  left: max(var(--ct-gutter), (100% - var(--ct-max)) / 2);
+  bottom: 32px;
+}
+.ct-hero__cue span {
+  display: inline-block;
+  animation: ct-bob 2.4s var(--ct-ease) infinite;
+}
+@keyframes ct-bob {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+/* --- about --------------------------------------------------------------- */
+
+.ct-about__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(32px, 6vw, 96px);
+}
+.ct-about__hello {
+  margin: 1rem 0 2rem;
+  font: italic 400 clamp(1.9rem, 3vw, 2.5rem) / 1.1 var(--ct-serif);
+}
+
+.ct-facts {
+  display: grid;
+  margin: 0;
+}
+.ct-facts__row {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--ct-rule);
+}
+.ct-facts__row:last-child {
+  border-bottom: 1px solid var(--ct-rule);
+}
+.ct-facts dt {
+  padding-top: 0.2em;
+  font: 500 0.7rem/1.4 var(--ct-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink-3);
+}
+.ct-facts dd {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.ct .ct-about__lead {
+  margin: 0 0 2.25rem;
+}
+.ct .ct-about__lead-text {
+  font: 400 clamp(1.9rem, 3.6vw, 3.1rem) / 1.17 var(--ct-serif);
+  letter-spacing: -0.006em;
+}
+
+/* --- work: index ------------------------------------------------------------ */
+
+.ct-index ol {
+  margin: 0 0 clamp(56px, 8vw, 104px);
+  padding: 0;
+  list-style: none;
+  border-top: 1.5px solid var(--ct-ink);
+}
+.ct-index a {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 15rem) minmax(0, 1fr) auto;
+  gap: 1.25rem;
+  align-items: baseline;
+  padding: 1.05rem 0.25rem;
+  border-bottom: 1px solid var(--ct-rule);
+  transition:
+    padding 0.35s var(--ct-ease),
+    background-color 0.35s var(--ct-ease);
+}
+.ct-index__n {
+  font: 500 0.8rem/1 var(--ct-mono);
+  color: var(--ct-red-ink);
+}
+.ct-index__t {
+  font: 400 1.55rem/1.1 var(--ct-serif);
+  transition: color 0.25s var(--ct-ease);
+}
+.ct-index__s {
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--ct-ink-2);
+}
+.ct-index__y {
+  font: 500 0.75rem/1 var(--ct-mono);
+  color: var(--ct-ink-3);
+}
+.ct-index a:hover {
+  padding-left: 0.85rem;
+  background: rgba(215, 25, 53, 0.045);
+}
+.ct-index a:hover .ct-index__t {
+  color: var(--ct-red-ink);
+}
+
+/* --- work: the project card ---------------------------------------------------- */
+
+.ct-projects {
+  display: grid;
+  /* minmax(0, ...) so a long title or code line cannot widen the card past the column. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 48px);
+}
+.ct-project {
+  scroll-margin-top: var(--ct-nav-clear);
+}
+
+.ct .ct-project__card {
+  padding: clamp(22px, 4.2vw, 60px);
+  border-radius: 6px;
+  background-color: var(--ct-sheet);
+  box-shadow:
+    0 1px 0 rgba(18, 18, 18, 0.04),
+    0 34px 70px -46px rgba(18, 18, 18, 0.32);
+}
+.ct .ct-project__card > .spotlight-card__border,
+.ct .ct-layer > .spotlight-card__border {
+  background: var(--ct-rule-2);
+}
+
+.ct-project__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(16px, 3vw, 40px);
+  align-items: start;
+  padding-bottom: clamp(24px, 3vw, 36px);
+  border-bottom: 1.5px solid var(--ct-ink);
+}
+.ct-project__index {
+  font: 400 clamp(3rem, 6vw, 5.5rem) / 0.8 var(--ct-serif);
+  color: var(--ct-red);
+}
+.ct-project__title {
+  margin: 0;
+  font: 400 clamp(2rem, 4vw, 3.4rem) / 1 var(--ct-serif);
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+}
+.ct-project__sub {
+  max-width: 40ch;
+  margin: 0.5rem 0 0;
+  font: italic 400 clamp(1.15rem, 1.8vw, 1.45rem) / 1.3 var(--ct-serif);
+  color: var(--ct-ink-2);
+}
+.ct-project__meta {
+  display: grid;
+  gap: 0.6rem;
+  min-width: 13rem;
+  margin: 0;
+}
+.ct-project__meta > div {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: baseline;
+}
+.ct-project__meta dt {
+  font: 500 0.68rem/1 var(--ct-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink-3);
+}
+.ct-project__meta dd {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+/* The surface stamps a project's status; so does its reading copy. */
+.ct-stamp {
+  display: inline-block;
+  padding: 0.35em 0.6em;
+  font: 500 0.68rem/1 var(--ct-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ct-red-ink);
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  rotate: -2deg;
+}
+
+.ct-project__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+  padding-block: clamp(28px, 4vw, 48px);
+}
+
+.ct-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ct-chips li {
+  padding: 0.45em 0.8em;
+  font: 400 0.75rem/1 var(--ct-mono);
+  background: var(--ct-paper);
+  border: 1px solid var(--ct-rule-2);
+  border-radius: 3px;
+}
+
+.ct-project__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin: 1.6rem 0 0;
+}
+
+/* Screenshots are inked into panels that cast screentone. The tone falls
+   outside the panel, so the image keeps the column's full width and lines up
+   with everything else in the card. */
+.ct-preview {
+  position: relative;
+  margin: 0;
+}
+.ct-preview__panel {
+  position: relative;
+}
+.ct-preview__panel::before {
+  content: '';
+  position: absolute;
+  inset: 12px -12px -12px 12px;
+  background: var(--ct-tone-ink);
+}
+.ct-preview__panel > * {
+  position: relative;
+}
+.ct-preview__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: #e8e6e1;
+  border: 2px solid var(--ct-ink);
+}
+.ct-preview__frame img {
+  position: absolute;
+  inset: -8% 0;
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+}
+.ct-preview__panel > .ct-preview__inset {
+  position: absolute;
+  right: -10px;
+  bottom: -20px;
+  width: 40%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 2px solid var(--ct-ink);
+  box-shadow: 0 20px 40px -20px rgba(18, 18, 18, 0.45);
+  rotate: 2deg;
+  transition: transform 0.5s var(--ct-ease);
+}
+.ct-preview__inset img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ct-preview:hover .ct-preview__inset {
+  transform: translate(6px, 6px);
+}
+.ct-preview figcaption {
+  margin-top: 1.5rem;
+  font: 400 0.72rem/1.3 var(--ct-mono);
+  letter-spacing: 0.06em;
+  color: var(--ct-ink-3);
+}
+
+.ct-preview--plain .ct-preview__word {
+  margin: 0;
+  padding: clamp(24px, 3vw, 36px) clamp(24px, 3vw, 36px) 1.5rem;
+  font: 400 clamp(2.6rem, 5.4vw, 4.6rem) / 0.95 var(--ct-serif);
+  color: transparent;
+  -webkit-text-stroke: 1.2px var(--ct-ink);
+  overflow-wrap: anywhere;
+  background: var(--ct-sheet);
+  border: 2px solid var(--ct-ink);
+  border-bottom: 0;
+}
+.ct-preview--plain .ct-btn,
+.ct-preview--plain .ct-preview__note {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+.ct-preview--plain .ct-btn {
+  justify-content: space-between;
+  min-height: 56px;
+  border-width: 2px;
+}
+.ct-preview__note {
+  padding: 1rem clamp(24px, 3vw, 36px);
+  font: 400 0.8rem/1.4 var(--ct-mono);
+  background: var(--ct-sheet);
+  border: 2px solid var(--ct-ink);
+  border-top: 0;
+}
+
+/* The case file: three beats, read left to right. */
+.ct-case {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 44px);
+  padding-block: clamp(28px, 4vw, 48px);
+  border-top: 1px solid var(--ct-rule);
+}
+.ct-case__beat h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  margin: 0 0 0.6rem;
+  font: 600 1.02rem/1.3 var(--ct-sans);
+}
+.ct-case__n {
+  font: italic 400 1.2rem/1 var(--ct-serif);
+  color: var(--ct-red-ink);
+}
+.ct-case__beat p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.68;
+  color: var(--ct-ink-2);
+}
+
+.ct-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-block: 1px solid var(--ct-rule);
+}
+.ct-metrics__cell {
+  padding: 1.5rem 1.25rem 1.5rem 0;
+}
+.ct-metrics__cell + .ct-metrics__cell {
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--ct-rule);
+}
+.ct-metrics dt {
+  margin-bottom: 0.7rem;
+  font: 500 0.68rem/1.3 var(--ct-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink-3);
+}
+.ct-metrics dd {
+  /* One row height for every value, bottom-aligned, so a written value and a
+     large figure finish on the same line. */
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(2rem, 3.2vw, 2.6rem);
+  margin: 0;
+}
+.ct-metrics__fig {
+  font: 400 clamp(2rem, 3.2vw, 2.6rem) / 1 var(--ct-serif);
+  font-variant-numeric: tabular-nums;
+}
+.ct-metrics__fig small {
+  font: 400 0.92rem/1.3 var(--ct-sans);
+  color: var(--ct-ink-2);
+}
+.ct-metrics__fig--text {
+  display: block;
+  font-size: clamp(1.35rem, 2vw, 1.6rem);
+  line-height: 1.15;
+}
+
+/* The mechanism: a sequence, so it is drawn as one. --fill is scrubbed by the scroll. */
+.ct-mech {
+  padding-top: clamp(36px, 5vw, 64px);
+}
+.ct-mech__head {
+  max-width: 62ch;
+  margin-bottom: 2.25rem;
+}
+.ct-mech__title {
+  margin: 0.55rem 0 0.25rem;
+  font: 400 clamp(1.8rem, 3vw, 2.4rem) / 1.1 var(--ct-serif);
+}
+.ct-mech__sub {
+  margin: 0;
+  font: italic 400 1.2rem/1.4 var(--ct-serif);
+  color: var(--ct-ink-2);
+}
+
+.ct-flow {
+  --fill: 1;
+  position: relative;
+}
+.ct-flow ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2.5vw, 36px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* From the first dot's centre to the last one's; --rail-x is measured in ProjectCard. */
+.ct-flow__rail {
+  position: absolute;
+  top: 18px;
+  left: 19px;
+  right: var(--rail-x, 19px);
+  height: 2px;
+  background: var(--ct-rule);
+}
+.ct-flow__rail i {
+  position: absolute;
+  inset: 0;
+  background: var(--ct-red);
+  transform: scaleX(var(--fill));
+  transform-origin: left center;
+}
+.ct-flow__dot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 1.1rem;
+  font: 500 0.8rem/1 var(--ct-mono);
+  background: var(--ct-sheet);
+  border: 2px solid var(--ct-ink);
+  border-radius: 50%;
+}
+.ct-flow__stage b {
+  display: block;
+  font: 500 0.78rem/1.3 var(--ct-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.ct-flow__stage p {
+  margin: 0.55rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.62;
+  color: var(--ct-ink-2);
+}
+
+.ct-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 2.5rem;
+  margin-top: 2.5rem;
+  padding: 1.35rem 1.6rem;
+  background: var(--ct-paper);
+  border-left: 3px solid var(--ct-red);
+}
+.ct-notes p {
+  margin: 0;
+  font: italic 400 1.17rem/1.45 var(--ct-serif);
+}
+
+/* Code is the one panel printed in reverse: night ink, as on the surface. */
+.ct-source {
+  margin: clamp(28px, 4vw, 48px) 0 0;
+  overflow: hidden;
+  background: #161616;
+  border: 1.5px solid var(--ct-ink);
+  border-radius: 4px;
+}
+.ct-source figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1.1rem;
+  font: 400 0.75rem/1.2 var(--ct-mono);
+  color: var(--ct-night-text);
+  background: var(--ct-ink);
+  border-bottom: 1px solid #2c2c2c;
+}
+.ct-source__fn {
+  color: #ff5668;
+}
+.ct-source pre {
+  margin: 0;
+  padding: 1.25rem 1.1rem;
+  overflow: auto;
+  font: 400 0.85rem/1.7 var(--ct-mono);
+  color: #ecebe7;
+  tab-size: 4;
+}
+.ct-source__c {
+  font-style: italic;
+  color: #a2a2a6;
+}
+
+/* --- websites ------------------------------------------------------------- */
+
+.ct .ct-chroma {
+  font-family: var(--ct-sans);
+}
+
+.ct-why {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 44px);
+  margin-top: clamp(56px, 8vw, 104px);
+  padding-top: 2rem;
+  border-top: 1.5px solid var(--ct-ink);
+}
+.ct-why__item h3 {
+  margin: 0 0 0.6rem;
+  font: italic 400 1.65rem/1.15 var(--ct-serif);
+}
+.ct-why__item p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.68;
+  color: var(--ct-ink-2);
+}
+.ct-why__facts {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 1.5rem;
+}
+.ct-why__facts .ct-facts__row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.35rem;
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+/* --- stack ----------------------------------------------------------------- */
+
+.ct-loops {
+  display: grid;
+  /* minmax(0, ...) or each loop grows to its own track and adds copies to fill itself. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-bottom: clamp(48px, 6vw, 80px);
+  padding-block: 1.4rem;
+  border-block: 1.5px solid var(--ct-ink);
+}
+.ct-loop__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font: italic 400 2.1rem/1 var(--ct-serif);
+  white-space: nowrap;
+  color: var(--ct-ink);
+}
+.ct-loop__item::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: var(--ct-red);
+  border-radius: 50%;
+}
+
+.ct-layers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+.ct .ct-layer {
+  padding: 1.75rem;
+  border-radius: 6px;
+  background-color: var(--ct-sheet);
+}
+.ct-layer__name {
+  margin: 0 0 1rem;
+  font: 600 1.05rem/1.3 var(--ct-sans);
+}
+.ct-layer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ct-layer li {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--ct-rule);
+}
+.ct-layer__skill {
+  font-weight: 500;
+}
+.ct-layer__used {
+  font: 400 0.72rem/1.4 var(--ct-mono);
+  color: var(--ct-ink-3);
+}
+
+/* --- contact ---------------------------------------------------------------- */
+
+.ct-contact__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: end;
+}
+.ct-contact .ct-head {
+  margin-bottom: 0;
+}
+.ct .ct-contact__title {
+  font-size: clamp(3rem, 7vw, 6rem);
+}
+.ct-contact__primary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  margin-top: 2.25rem;
+}
+.ct-contact__primary-v {
+  font: 400 0.85rem/1.4 var(--ct-mono);
+  color: var(--ct-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.ct-channels {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1.5px solid var(--ct-ink);
+}
+.ct-channels a {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 1.35rem 0.25rem;
+  border-bottom: 1px solid var(--ct-rule);
+}
+.ct-channels a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(215, 25, 53, 0.05);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s var(--ct-ease);
+}
+.ct-channels a:hover::before {
+  transform: scaleX(1);
+}
+.ct-channels__k {
+  font: 500 0.72rem/1.3 var(--ct-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink-3);
+}
+.ct-channels__v {
+  font: 400 clamp(1.35rem, 2.4vw, 2rem) / 1.15 var(--ct-serif);
+  overflow-wrap: anywhere;
+  transition: transform 0.35s var(--ct-ease);
+}
+.ct-channels__a {
+  color: var(--ct-red);
+  transition: transform 0.35s var(--ct-ease);
+}
+.ct-channels a:hover .ct-channels__v {
+  transform: translateX(0.4rem);
+}
+.ct-channels a:hover .ct-channels__a {
+  transform: translate(4px, -4px);
+}
+
+/* --- footer: the page ends in the surface's night ----------------------------- */
+
+.ct-footer {
+  padding: clamp(64px, 9vw, 112px) 0 28px;
+  color: var(--ct-night-text);
+  background: var(--ct-ink);
+}
+.ct-footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr);
+  gap: 40px;
+}
+.ct-footer__name {
+  margin: 0 0 0.75rem;
+  font: 400 clamp(3.5rem, 8vw, 6.5rem) / 0.9 var(--ct-display);
+}
+.ct-footer__line {
+  max-width: 32ch;
+  margin: 0;
+  font: italic 400 1.3rem/1.35 var(--ct-serif);
+  color: var(--ct-night-dim);
+}
+.ct-footer .ct-label {
+  margin-bottom: 1.1rem;
+  color: var(--ct-night-dim);
+}
+.ct-footer__col ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ct-footer__col a {
+  font: 400 0.85rem/1.4 var(--ct-mono);
+  transition: color 0.2s var(--ct-ease);
+}
+.ct-footer__col a:hover,
+.ct-footer__base a:hover {
+  color: #ff5668;
+}
+.ct-footer__switch-note {
+  max-width: 28ch;
+  margin: 0 0 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ct-night-dim);
+}
+.ct-footer .ct-btn {
+  color: var(--ct-night-text);
+  border-color: var(--ct-night-text);
+}
+.ct-footer .ct-btn:hover {
+  color: var(--ct-ink);
+  background: var(--ct-night-text);
+}
+.ct-footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: clamp(56px, 8vw, 96px);
+  padding-top: 20px;
+  font: 400 0.75rem/1.4 var(--ct-mono);
+  color: var(--ct-night-dim);
+  border-top: 1px solid rgba(243, 242, 239, 0.16);
+}
+
+/* --- smaller screens --------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .ct-project__intro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ct-project__head {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .ct-project__meta {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, auto));
+    justify-content: start;
+    gap: 0.5rem 2rem;
+  }
+  .ct-project__meta > div {
+    grid-template-columns: auto auto;
+  }
+  .ct-index a {
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+  }
+  .ct-index__s {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  html[data-experience='content'] {
+    --ct-nav-clear: 80px;
+  }
+  .ct-hero {
+    padding: 112px 0 96px;
+  }
+  .ct-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .ct-hero__panel {
+    order: -1;
+    justify-self: start;
+    width: min(46vw, 200px);
+  }
+  .ct-hero__panel::before {
+    transform: translate(10px, 10px);
+  }
+
+  .ct-about__grid,
+  .ct-contact__grid,
+  .ct-footer__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ct-project__meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ct-project__meta > div {
+    grid-template-columns: 4rem minmax(0, 1fr);
+  }
+
+  .ct-case,
+  .ct-why {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ct-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ct-metrics__cell + .ct-metrics__cell {
+    padding-left: 1.25rem;
+  }
+  .ct-metrics__cell:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .ct-metrics__cell:nth-child(n + 3) {
+    border-top: 1px solid var(--ct-rule);
+  }
+
+  /* The rail turns to run down the stages. */
+  .ct-flow ol {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+  .ct-flow__rail {
+    top: 19px;
+    bottom: var(--rail-y, 19px);
+    left: 18px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+  .ct-flow__rail i {
+    transform: scaleY(var(--fill));
+    transform-origin: center top;
+  }
+  .ct-flow__stage {
+    position: relative;
+    padding-left: 56px;
+  }
+  .ct-flow__dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .ct-flow__stage b {
+    padding-top: 0.7rem;
+  }
+  .ct-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ct-why__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ct-channels a {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.35rem 1rem;
+  }
+  .ct-channels__k {
+    grid-column: 1 / -1;
+  }
+
+  .ct-loop__item {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .ct-index a {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+  }
+  .ct-index__y {
+    display: none;
+  }
+  .ct-metrics__fig {
+    font-size: 1.75rem;
+  }
+  .ct-preview__inset {
+    width: 46%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct *,
+  .ct *::before,
+  .ct *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

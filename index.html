@@ -21,7 +21,20 @@
         margin: 0;
         background: #080808;
       }
+      html[data-experience='content'],
+      html[data-experience='content'] body {
+        background: #f3f2ef;
+      }
     </style>
+    <!-- The Content view is light, so it is marked before first paint. Mirrors
+         the routing in src/entry.ts and src/experience.ts. -->
+    <script>
+      try {
+        var v = new URLSearchParams(location.search).get('view') || sessionStorage.getItem('zoom:experience');
+        if (v === 'content' || matchMedia('(max-width: 860px), (pointer: coarse)').matches)
+          document.documentElement.dataset.experience = 'content';
+      } catch (e) {}
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Abhishek — one surface" />

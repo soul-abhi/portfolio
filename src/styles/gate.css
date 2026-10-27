@@ -152,3 +152,119 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* --- the two doors ----------------------------------------------------------
+   After the name, the same cloud offers the two experiences. Hard borders on
+   the grid's cell size and stepped transitions, like everything drawn here. */
+.ask__pick {
+  display: none;
+  flex-direction: column;
+  gap: calc(var(--q) * 2);
+}
+.ask.is-choosing .ask__pick {
+  display: flex;
+}
+.ask.is-choosing .ask__field,
+.ask.is-choosing .ask__hint {
+  display: none;
+}
+.ask__opt {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: calc(var(--q) * 2) calc(var(--q) * 3);
+  font: inherit;
+  text-align: left;
+  color: #0d1424;
+  background: transparent;
+  border: var(--q) solid #0a0f1c;
+  border-radius: 0;
+  cursor: pointer;
+  transition:
+    background-color 0.12s steps(2),
+    color 0.12s steps(2);
+}
+.ask__opt b {
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #7a1020;
+}
+.ask__opt span {
+  font-size: 0.7em;
+  color: #4a5a72;
+}
+.ask__opt:hover,
+.ask__opt:focus-visible {
+  outline: none;
+  color: #f4f8fb;
+  background: #0a0f1c;
+}
+.ask__opt:hover b,
+.ask__opt:focus-visible b {
+  color: #ff5668;
+}
+.ask__opt:hover span,
+.ask__opt:focus-visible span {
+  color: #d8dfe8;
+}
+.ask__opt.is-picked,
+.ask__opt.is-picked b,
+.ask__opt.is-picked span {
+  color: #fff;
+  background: #c8102e;
+}
+.ask__opt:disabled {
+  cursor: default;
+}
+
+/* Reduced motion and repeat visits: the same doors on a still, dark card. */
+.gate__still {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 28px;
+  padding: 16px;
+  background: #050505;
+  font-family: 'Silkscreen', var(--mono), monospace;
+  font-size: 16px;
+  line-height: 1.3;
+}
+.gate__still-q {
+  margin: 0;
+  text-align: center;
+  color: #f4f8fb;
+}
+.gate__still-opts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+.gate__still .ask__opt {
+  --q: 3px;
+  width: auto;
+  min-width: 260px;
+  color: #d8dfe8;
+  border-color: #d8dfe8;
+}
+.gate__still .ask__opt b {
+  color: #ff5668;
+}
+.gate__still .ask__opt span {
+  color: #9fb0c4;
+}
+.gate__still .ask__opt:hover,
+.gate__still .ask__opt:focus-visible {
+  color: #0a0f1c;
+  background: #d8dfe8;
+}
+.gate__still .ask__opt:hover b,
+.gate__still .ask__opt:focus-visible b {
+  color: #7a1020;
+}
+.gate__still .ask__opt:hover span,
+.gate__still .ask__opt:focus-visible span {
+  color: #4a5a72;
+}
